@@ -5,26 +5,14 @@
  */
 package translategame;
 
+import controlP5.ControlP5;
 import processing.core.PApplet;
-
+import processing.core.PFont;
+import processing.core.PImage;
 /**
  *
  * @author zlsh80826
  */
-public class ClientApplet extends PApplet{
-    
-    @Override
-    public void setup(){
-        setSize(600, 800);
-    }
-    
-    @Override
-    public void draw(){
-        background(255);
-        smooth();
-        stroke(200, 153, 126, 250);
-        strokeWeight(5);
-        line(0, 300, 600, 300);
-       
-    }
+public class ClientApplet extends PApplet {
+
 }

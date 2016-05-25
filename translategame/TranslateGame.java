@@ -12,17 +12,22 @@ import javax.swing.JFrame;
  * @author zlsh80826
  */
 public class TranslateGame {
+    public void connect(String account, String password){
+        
+    }
+    
     static public void main(String[] args){
+        TranslateGame game = new TranslateGame();
         JFrame frame = new JFrame("Translate Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 800);
+        frame.setSize(1134, 704);
         frame.setVisible(true);
         /* Need to implement
         frame.setShape(shape);
         frame.setIconImage(image);        
         */
         frame.setLocation(550, 100);//need to tune
-        ClientApplet applet = new ClientApplet();
+        LoginPaint applet = new LoginPaint(game);
         applet.init();
         applet.start();
         frame.setContentPane(applet);
