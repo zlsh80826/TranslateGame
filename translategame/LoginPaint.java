@@ -6,7 +6,10 @@
 package translategame;
 
 import controlP5.ControlP5;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
@@ -34,6 +37,7 @@ public class LoginPaint extends PApplet{
     
     public LoginPaint(TranslateGame parent){
         this.parent = parent;
+        this.parent.frame.setResizable(false);
     }
     
     @Override
@@ -87,7 +91,14 @@ public class LoginPaint extends PApplet{
     public void multiple(){
         testStr = "Multiple";
         this.stop();
-        parent.connect("root", "root");
+        try {
+            parent.connect("root", "root");
+        } catch (IOException ex) {
+            this.start();
+            System.out.println("connect error");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LoginPaint.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void setting(){

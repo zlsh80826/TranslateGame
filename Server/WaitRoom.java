@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import serialize.Message;
+import serialize.*;
+
 
 /**
  *
@@ -38,7 +39,7 @@ public class WaitRoom extends Thread {
             this.out = new ObjectOutputStream(player.getOutputStream());
         } catch (IOException ex) {
             System.out.println("Create OutputStream with problem");
-        }
+        } 
     }
 
     @Override
@@ -62,7 +63,8 @@ public class WaitRoom extends Thread {
         }
     }
     
-    public void end(){
+    public void end() throws IOException{
+        out.writeObject(new PvpRoomType());
         isRunning = false;
     }
 }

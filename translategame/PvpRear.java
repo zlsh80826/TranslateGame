@@ -17,44 +17,44 @@ import serialize.*;
  *
  * @author zlsh80826
  */
-public class WaitRoomRear extends Thread {
+public class PvpRear extends Thread {
 
     TranslateGame parent;
-    WaitRoomFront front;
+    Socket socket;
+    PvpFront front;
     ObjectOutputStream out;
     ObjectInputStream in;
-    Socket socket;
     boolean isRunning;
 
-    WaitRoomRear(TranslateGame parent, Socket socket) {
+    PvpRear(TranslateGame parent, Socket socket) {
         this.parent = parent;
         this.socket = socket;
         this.isRunning = true;
-
+        System.out.println("1");
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
             System.out.println("output Stream error");
         }
-
+        System.out.println("2");
         try {
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
             System.out.println("input Stream error");
         }
+        System.out.println("3");
     }
 
     @Override
     public void run() {
         while (isRunning) {
             Request request = recv();
-            if (request != null) {
-                front.setTime(request.toString());
-            }
+            
+            //need implements
         }
     }
 
-    public void setFront(WaitRoomFront front) {
+    public void setFront(PvpFront front) {
         this.front = front;
     }
 
@@ -66,10 +66,6 @@ public class WaitRoomRear extends Thread {
     public Request recv() {
         try {
             Request request = (Request) in.readObject();
-            if (request instanceof PvpRoomType) {
-                this.end();
-                return null;
-            }
             return request;
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(WaitRoomRear.class.getName()).log(Level.SEVERE, null, ex);

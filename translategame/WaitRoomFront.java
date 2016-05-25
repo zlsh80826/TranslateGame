@@ -7,6 +7,7 @@ package translategame;
 
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PImage;
 /**
  *
  * @author zlsh80826
@@ -16,6 +17,9 @@ public class WaitRoomFront extends PApplet{
     TranslateGame parent;
     WaitRoomRear rear;
     PFont font;
+    
+    //test variable
+    PImage image;
     
     WaitRoomFront(TranslateGame parent, WaitRoomRear rear){
         this.parent = parent;

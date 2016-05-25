@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import serialize.*;
 /**
  *
  * @author zlsh80826
@@ -45,6 +46,8 @@ public class Listener implements Runnable{
                     player1 = listenSocket.accept();
                     String address = player1.getInetAddress().toString();               
                     monitor.addText("\nConnection from " + address.substring(1) + " : " + player1.getPort());
+                    ObjectOutputStream out = new ObjectOutputStream(player1.getOutputStream());
+                    out.writeObject(new WaitRoomType());
                     waitroom = new WaitRoom(this, player1);
                     waitroom.start();
                 } catch (IOException ex) {
@@ -57,9 +60,15 @@ public class Listener implements Runnable{
                     String address= player2.getInetAddress().toString();
                     monitor.addText("\nConnection from " + address.substring(1) + " : " + player2.getPort());
                     waitroom.end();
+                    ObjectOutputStream out = new ObjectOutputStream(player2.getOutputStream());
+                    out.writeObject(new PvpRoomType());
+                    waitroom.join();
                     Pvp pvp = new Pvp(this, player1, player2);
+                    pvp.start();
                 } catch (IOException ex) {
                     System.out.println("PVP exists error");
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Listener.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 playerWaitCounter = 0;                
             }

@@ -13,6 +13,10 @@ import java.io.Serializable;
  */
 public class Request implements Serializable{
     String command;
+    public Request(){
+        this.command = null;
+    }
+    
     public Request(String command){
         this.command = command;
     }
