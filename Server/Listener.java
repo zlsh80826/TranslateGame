@@ -22,8 +22,7 @@ public class Listener implements Runnable{
     int port;
     Socket player1;
     Socket player2;
-    //testvariable
-    ObjectOutputStream tmp;
+    WaitRoom waitroom;
     
     Listener(Monitor monitor){
         this.monitor = monitor;
@@ -46,9 +45,10 @@ public class Listener implements Runnable{
                     player1 = listenSocket.accept();
                     String address = player1.getInetAddress().toString();               
                     monitor.addText("\nConnection from " + address.substring(1) + " : " + player1.getPort());
-                    tmp = new ObjectOutputStream(player1.getOutputStream());
+                    waitroom = new WaitRoom(this, player1);
+                    waitroom.start();
                 } catch (IOException ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("waitroom exists error");
                 }
                 playerWaitCounter ++;
             }else if(playerWaitCounter == 1){
@@ -56,9 +56,10 @@ public class Listener implements Runnable{
                     player2 = listenSocket.accept();
                     String address= player2.getInetAddress().toString();
                     monitor.addText("\nConnection from " + address.substring(1) + " : " + player2.getPort());
+                    waitroom.end();
                     Pvp pvp = new Pvp(this, player1, player2);
                 } catch (IOException ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("PVP exists error");
                 }
                 playerWaitCounter = 0;                
             }

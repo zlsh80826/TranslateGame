@@ -6,11 +6,7 @@
 package translategame;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import serialize.Request;
 
@@ -48,21 +44,15 @@ public class TranslateGame {
     public void connect(String account, String password){
         try {
             Socket socket = new Socket("127.0.0.1", 8888);
-            System.out.println("?");
-            InputStream tmpStream = socket.getInputStream();
-            System.out.println("???");
-            ObjectInputStream tmp = new ObjectInputStream(tmpStream);
-            System.out.println(count);
-            System.out.flush();
-            if(count == 1){
-                Request request = (Request)tmp.readObject();
-                System.out.println(request.toString());
-            }
-            count ++;
+            WaitRoomRear waitRear = new WaitRoomRear(this, socket);
+            WaitRoomFront waitFront = new WaitRoomFront(this, waitRear);
+            waitRear.setFront(waitFront);
+            frame.setContentPane(waitFront);
+            waitFront.init();
+            waitRear.start();
+            waitFront.start();
         } catch (IOException ex) {
             System.out.println("Connect error");
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Csst error");
         }
     }
     

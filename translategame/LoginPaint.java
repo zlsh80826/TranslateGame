@@ -86,6 +86,7 @@ public class LoginPaint extends PApplet{
     
     public void multiple(){
         testStr = "Multiple";
+        this.stop();
         parent.connect("root", "root");
     }
     
