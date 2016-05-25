@@ -10,8 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
-
 /**
  *
  * @author zlsh80826
@@ -41,7 +39,7 @@ public class Listener implements Runnable{
             if(playerWaitCounter == 0){
                 try {
                     player1 = listenSocket.accept();
-                    String address= player1.getInetAddress().toString();               
+                    String address = player1.getInetAddress().toString();               
                     monitor.addText("\nConnection from " + address.substring(1) + " : " + player1.getPort());
                 } catch (IOException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -55,9 +53,7 @@ public class Listener implements Runnable{
                 } catch (IOException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                playerWaitCounter ++;                
-            }else{
-                //Need to implement prevent other connection
+                playerWaitCounter = 0;                
             }
         }        
     }

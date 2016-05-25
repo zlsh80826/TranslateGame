@@ -5,7 +5,6 @@
  */
 package translategame;
 
-import controlP5.CColor;
 import controlP5.ControlP5;
 import java.util.ArrayList;
 import processing.core.PApplet;
@@ -16,6 +15,7 @@ import processing.core.PImage;
  *
  * @author zlsh80826
  */
+
 public class LoginPaint extends PApplet{
     PImage bgImg;
     PFont titleFont;
@@ -27,6 +27,7 @@ public class LoginPaint extends PApplet{
     int buttonHeight;
     int buttonSpace;
     ArrayList<String> buttonLabel;
+    String testStr;
     
     
     public LoginPaint(TranslateGame console){
@@ -44,6 +45,9 @@ public class LoginPaint extends PApplet{
         size(bgImg.width, bgImg.height);
         titleFont = this.createFont("src/material/Tekton.otf", 64, true);
         buttonInit();
+        
+        //test
+        testStr = "Init";
     }
 
     @Override
@@ -54,6 +58,7 @@ public class LoginPaint extends PApplet{
         text("To see is to believe", 80, 130, -100);
         fill(51, 102, 255, 200);
         text("To see is to believe", 50, 150);
+        text(testStr, 50,300);
     }    
     
     private void buttonInit(){
@@ -71,5 +76,21 @@ public class LoginPaint extends PApplet{
             String label = buttonLabel.get(i);
             cp5.addButton(label.toLowerCase()).setLabel(label).setPosition(buttonOffsetX, buttonOffsetY + buttonSpace*i).setSize(buttonWidth, buttonHeight);
         }        
+    }
+    
+    public void single(){
+        testStr = "Single";
+    }
+    
+    public void multiple(){
+        testStr = "Multiple";
+    }
+    
+    public void setting(){
+        testStr = "Setting";
+    }
+    
+    public void about(){
+        testStr = "About";
     }
 }
