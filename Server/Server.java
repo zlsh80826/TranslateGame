@@ -4,12 +4,14 @@
  * and open the template in the editor.
  */
 package Server;
+
 /**
  *
  * @author zlsh80826
  */
 public class Server {
-    static public void main(String[] args){
+
+    static public void main(String[] args) {
         Monitor monitor = new Monitor();
         Listener listener = new Listener(monitor);
         Thread listenDeamon = new Thread(listener);

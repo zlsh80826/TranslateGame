@@ -19,7 +19,7 @@ import processing.core.PImage;
 public class LoginPaint extends PApplet{
     PImage bgImg;
     PFont titleFont;
-    TranslateGame console;
+    TranslateGame parent;
     ControlP5 cp5;
     float buttonOffsetX;
     float buttonOffsetY;
@@ -27,11 +27,13 @@ public class LoginPaint extends PApplet{
     int buttonHeight;
     int buttonSpace;
     ArrayList<String> buttonLabel;
+    
+    //test variable
     String testStr;
     
     
-    public LoginPaint(TranslateGame console){
-        this.console = console;
+    public LoginPaint(TranslateGame parent){
+        this.parent = parent;
     }
     
     @Override
@@ -84,6 +86,7 @@ public class LoginPaint extends PApplet{
     
     public void multiple(){
         testStr = "Multiple";
+        parent.connect("root", "root");
     }
     
     public void setting(){
