@@ -5,10 +5,8 @@
  */
 package translategame;
 
-import controlP5.ControlP5;
 import processing.core.PApplet;
-import processing.core.PFont;
-import processing.core.PImage;
+
 /**
  *
  * @author zlsh80826

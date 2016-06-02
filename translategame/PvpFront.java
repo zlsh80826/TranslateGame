@@ -5,6 +5,7 @@
  */
 package translategame;
 
+import de.looksgood.ani.Ani;
 import processing.core.PApplet;
 
 /**
@@ -14,20 +15,24 @@ import processing.core.PApplet;
 public class PvpFront extends PApplet{
     TranslateGame parent;
     PvpRear rear;
+    Character character;
     PvpFront(TranslateGame parent, PvpRear rear){
         this.parent = parent;
         this.rear = rear;
+        //this.character = new Character(this, 800f, 0f, "material/monster/Baron/BaronAttack", ".png", 27);
+        this.character = new Character(this, 800f, 300f, "material/monster/Mushroom/MushroomMove", ".png", 3);
     }
     
     @Override
     public void setup(){
         size(1134, 704);
-        background(77, 255, 77, 200);
         smooth();
+        Ani.init(this);
     }
     
     @Override
     public void draw(){
-        background(77, 255, 77, 200);
+        background(255);
+        this.character.display();
     }
 }
