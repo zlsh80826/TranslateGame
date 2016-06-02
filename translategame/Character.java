@@ -8,6 +8,9 @@ package translategame;
 import de.looksgood.ani.Ani;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
+
+import com.jogamp.newt.event.KeyEvent;
+
 import processing.core.PImage;
 
 /**
@@ -51,5 +54,35 @@ public class Character {
         this.x = x;
         this.y = y;
     }
+    public void keyPressed(KeyEvent e) {
+        int key1 = e.getKeyCode();
+        char key2 = e.getKeyChar();
+         
+        switch (key1) {
+           
+ 
+           
+            case KeyEvent.VK_UP:
+               x--;
+                break;
+             
+            case KeyEvent.VK_LEFT:
+                y--;
+                break;
+             
+            case KeyEvent.VK_DOWN:
+                x++;
+                break;
+             
+            case KeyEvent.VK_RIGHT:
+               y--;
+                break;
+           
+             
+            default:
+                System.out.println(key2);
+        }
+    }
 }
+
 
