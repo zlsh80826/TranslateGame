@@ -15,7 +15,8 @@ import processing.core.PImage;
  *
  * @author zlsh80826
  */
-public class MagicMan implements Serializable{
+public class MagicMan extends Character implements Serializable {
+
     PApplet parent;
     ArrayList<ArrayList<PImage>> images;
     ArrayList<Integer> imageCount;
@@ -32,11 +33,12 @@ public class MagicMan implements Serializable{
     // hit
     // attack
     // climb
-    
-    public MagicMan(PApplet parent, float x, float y){
+
+    public MagicMan(PApplet parent, float x, float y) {
         this.frame = new ArrayList<Integer>();
-        for(int i=0; i<10; ++i)
+        for (int i = 0; i < 10; ++i) {
             frame.add(0);
+        }
         this.imageCount = new ArrayList<Integer>();
         this.imageCount.add(3);
         this.imageCount.add(3);
@@ -53,26 +55,26 @@ public class MagicMan implements Serializable{
         this.x = x;
         this.y = y;
         this.fileName = new ArrayList<String>();
-        this.fileName.add( "Stand" );
-        this.fileName.add( "StandR" );
-        this.fileName.add( "Move" );
-        this.fileName.add( "MoveR" );
-        this.fileName.add( "Hit" );
-        this.fileName.add( "HitR" );
-        this.fileName.add( "Attack" );
-        this.fileName.add( "AttackR" );
-        this.fileName.add( "Climb" );
-        this.fileName.add( "ClimbR" );
+        this.fileName.add("Stand");
+        this.fileName.add("StandR");
+        this.fileName.add("Move");
+        this.fileName.add("MoveR");
+        this.fileName.add("Hit");
+        this.fileName.add("HitR");
+        this.fileName.add("Attack");
+        this.fileName.add("AttackR");
+        this.fileName.add("Climb");
+        this.fileName.add("ClimbR");
 
         this.reverse = false;
-        
+
         String imagePrefix = "material/character/Magic/Magic";
         String imageSuffix = ".png";
-        
+
         this.images = new ArrayList<ArrayList<PImage>>();
-        for(int j=0; j<fileName.size(); ++j){ 
+        for (int j = 0; j < fileName.size(); ++j) {
             ArrayList<PImage> temp = new ArrayList<PImage>();
-            for(int i=0; i< imageCount.get(j); ++i){
+            for (int i = 0; i < imageCount.get(j); ++i) {
                 String file_name = imagePrefix + fileName.get(j) + nf(i, 3) + imageSuffix;
                 temp.add(parent.loadImage(file_name));
             }
@@ -81,65 +83,67 @@ public class MagicMan implements Serializable{
         this.count = 0;
         this.action = 0;
     }
-    
-    public void display(){
+
+    @Override
+    public void display() {
         parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width,
-                      this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height);
-        if( ++count % 12 == 0){
+                this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height);
+        if (++count % 12 == 0) {
             count = 0;
-            int temp = (frame.get(this.getAction())+1) % (imageCount.get(this.getAction()));
-            frame.set(this.getAction(), temp );
+            int temp = (frame.get(this.getAction()) + 1) % (imageCount.get(this.getAction()));
+            frame.set(this.getAction(), temp);
         }
-        
-        if(revealIntroducion){
+
+        if (revealIntroducion) {
             parent.text("MagicMan", 574, 200);
         }
-    }   
-    
-    public void setPos(float x, float y){
+    }
+
+    public void setPos(float x, float y) {
         this.x = x;
         this.y = y;
-    }    
-    
-    public void setStand(){
+    }
+
+    public void setStand() {
         action = 0;
     }
-    
-    public void setMove(){
+
+    public void setMove() {
         action = 2;
     }
-    
-    public void setHit(){
+
+    public void setHit() {
         action = 4;
     }
-    
-    public void setAttack(){
+
+    public void setAttack() {
         action = 6;
     }
-    
-    public void setReverse(){
+
+    public void setReverse() {
         reverse = !reverse;
     }
-    
-    public void setClimb(){
+
+    public void setClimb() {
         action = 8;
     }
-    
-    int getReverse(){
-       if(reverse == true) 
-           return 1;
-       return 0;
+
+    int getReverse() {
+        if (reverse == true) {
+            return 1;
+        }
+        return 0;
     }
-    
-    int getAction(){
+
+    int getAction() {
         return action + this.getReverse();
-    }      
-    
-    public void introduction(){
+    }
+
+    public void introduction() {
         revealIntroducion = true;
     }
-    
-    public void hideIntroduction(){
+
+    public void hideIntroduction() {
         revealIntroducion = false;
     }
 }

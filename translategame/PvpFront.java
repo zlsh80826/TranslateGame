@@ -36,6 +36,8 @@ public class PvpFront extends PApplet {
     float selectModifyX = -35f;
     float selectModifyY = -50f;
     Career career;
+    serialize.Character hero;
+    serialize.Character enemy;
 
     PvpFront(TranslateGame parent, PvpRear rear) {
         this.parent = parent;
@@ -91,6 +93,8 @@ public class PvpFront extends PApplet {
             } else if (mouseY > 600) {
                 map.setY(map.getY() - 5);
             }
+            this.hero.display();
+            this.enemy.display();
         }
 
         //this.character.display();
@@ -127,7 +131,7 @@ public class PvpFront extends PApplet {
 
     @Override
     public void mouseMoved() {
-        if (gameStage == Stage.SELECT && (career == Career.UNCHOOSE) ) {
+        if (gameStage == Stage.SELECT && (career == Career.UNCHOOSE)) {
             frameRate(60);
             if (dist(this.swordManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
                 this.swordMan.setAttack();
@@ -151,24 +155,35 @@ public class PvpFront extends PApplet {
 
     @Override
     public void mouseClicked() {
-        if (gameStage == Stage.SELECT && (career == Career.UNCHOOSE) ) {
+        if (gameStage == Stage.SELECT && (career == Career.UNCHOOSE)) {
             frameRate(60);
             if (dist(this.swordManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
                 this.career = Career.SwordMan;
+                this.rear.sendSelectComplete(career);
+                hero = this.swordMan;
             } else if (dist(this.magicManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
                 this.career = Career.MagicMan;
+                this.rear.sendSelectComplete(career);
+                hero = this.magicMan;
             } else if (dist(this.archManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
                 this.career = Career.Archer;
+                this.rear.sendSelectComplete(career);
+                hero = this.archer;
             } else {
                 this.career = Career.UNCHOOSE;
             }
-            this.rear.sendSelectComplete();
         }
     }
-    
-    public void startGame(){
+
+    public void startGame(Career career) {
+        System.out.println("StartGame");
+        if(career == Career.SwordMan)
+            enemy = this.swordMan;
+        else if(career == Career.MagicMan)
+            enemy = this.magicMan;
+        else if(career == Career.Archer)
+            enemy = this.archer;
         this.gameStage = Stage.START;
-        System.out.println( "StartGame" );
     }
 
 }

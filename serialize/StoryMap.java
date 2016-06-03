@@ -15,6 +15,7 @@ import processing.core.PImage;
  * @author zlsh80826
  */
 public class StoryMap implements Serializable {
+
     float x;
     float y;
     int frame;
@@ -25,52 +26,55 @@ public class StoryMap implements Serializable {
     PImage[] images;
     PImage bg;
     PApplet parent;
-    
-    public StoryMap(PApplet parent, float x, float y){
+
+    public StoryMap(PApplet parent, float x, float y) {
         this.parent = parent;
         this.x = -300;
         this.y = 0;
         this.offsetY = -200;
         this.imageCount = 20;
         this.controlSeed = 0;
-        
+
         String imagePrefix = "material/map/MapleMap_image";
         String imageSuffix = ".png";
-        
+
         this.images = new PImage[imageCount];
-        for(int i=0; i<imageCount; ++i){ 
+        for (int i = 0; i < imageCount; ++i) {
             String file_name = imagePrefix + nf(i, 2) + imageSuffix;
             PImage image = parent.loadImage(file_name);
             images[i] = image;
         }
         bg = parent.loadImage("material/map/bkg_lg.png");
     }
-    
-    public void display(){
-        controlSeed = (controlSeed+1) % 8;
-        if(controlSeed == 0)
+
+    public void display() {
+        controlSeed = (controlSeed + 1) % 8;
+        if (controlSeed == 0) {
             frame = (frame + 1) % (imageCount);
-        parent.image(bg, x-5, y + offsetY);
+        }
+        parent.image(bg, x - 5, y + offsetY);
         parent.image(images[frame], x, y);
-    }     
-    
-    public void setX(float newX){
-        if(newX < -485 || newX > 0)
+    }
+
+    public void setX(float newX) {
+        if (newX < -485 || newX > 0) {
             return;
+        }
         this.x = newX;
     }
-    
-    public void setY(float newY){
-        if( newY > 100 || newY < 0)
-            return ;
+
+    public void setY(float newY) {
+        if (newY > 100 || newY < 0) {
+            return;
+        }
         this.y = newY;
     }
-    
-    public float getX(){
+
+    public float getX() {
         return x;
     }
-    
-    public float getY(){
+
+    public float getY() {
         return y;
     }
 }

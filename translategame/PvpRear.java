@@ -46,7 +46,7 @@ public class PvpRear extends Thread {
     public void run() {
         while (isRunning) {
             recv();
-            
+
             //need implements
         }
     }
@@ -64,36 +64,37 @@ public class PvpRear extends Thread {
         try {
             Object obj = in.readObject();
             System.out.println("Recv obj...");
-            if(obj instanceof Situation){
-                this.parseSituation((Situation)obj);
-            }else{
+            if (obj instanceof Situation) {
+                this.parseSituation((Situation) obj);
+            } else {
                 System.out.println("Client recv unrecognize packet");
             }
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(WaitRoomRear.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    void parseSituation(Situation status){
+
+    void parseSituation(Situation status) {
         System.out.println("Status: " + status.getStatus());
-        if("startgame".equals(status.getStatus())){
-            front.startGame();
+        if ("startgame".equals(status.getStatus())) {
+            System.out.println(status.getCareer());
+            front.startGame(status.getCareer());
         }
     }
-    
-    public void sendLoadComplete(){
+
+    public void sendLoadComplete() {
         try {
             out.writeObject(new Situation("loadcomplete"));
         } catch (IOException ex) {
             System.out.println("send complete status error");
         }
     }
-    
-    public void sendSelectComplete(){
+
+    public void sendSelectComplete(Career career) {
         try {
-            out.writeObject(new Situation("selectcomplete"));
+            out.writeObject(new Situation("selectcomplete", career));
         } catch (IOException ex) {
             System.out.println("send complete status error");
-        }        
+        }
     }
 }

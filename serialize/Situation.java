@@ -11,13 +11,25 @@ import java.io.Serializable;
  *
  * @author zlsh80826
  */
-public class Situation implements Serializable{
+public class Situation implements Serializable {
+
     String status;
-    public Situation(String str){
+    Career career;
+
+    public Situation(String str) {
         this.status = str;
     }
-    
-    public String getStatus(){
+
+    public Situation(String str, Career career) {
+        this.status = str;
+        this.career = career;
+    }
+
+    public String getStatus() {
         return status;
+    }
+
+    public Career getCareer() {
+        return career;
     }
 }

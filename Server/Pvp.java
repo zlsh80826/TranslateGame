@@ -18,6 +18,7 @@ import serialize.*;
  * @author zlsh80826
  */
 public class Pvp extends Thread {
+
     Socket pA;
     Socket pB;
     ObjectInputStream pAIn;
@@ -31,8 +32,10 @@ public class Pvp extends Thread {
     boolean selectComplete = false;
     boolean pASelectComplete = false;
     boolean pBSelectComplete = false;
-    
-    public Pvp(Listener monitor, Socket pA, Socket pB){
+    Career pACareer;
+    Career pBCareer;
+
+    public Pvp(Listener monitor, Socket pA, Socket pB) {
         this.pA = pA;
         this.pB = pB;
         this.monitor = monitor;
@@ -41,13 +44,13 @@ public class Pvp extends Thread {
         } catch (IOException ex) {
             System.out.println("pAInputStream init error");
         }
-        
+
         try {
             pBIn = new ObjectInputStream(pB.getInputStream());
         } catch (IOException ex) {
             System.out.println("pBInputStream init error");
         }
-        
+
         try {
             pAOut = new ObjectOutputStream(pA.getOutputStream());
         } catch (IOException ex) {
@@ -59,29 +62,29 @@ public class Pvp extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     @Override
-    public void run(){
+    public void run() {
         PvpListen pAHandler = new PvpListen(this, pAIn, 0);
         PvpListen pBHandler = new PvpListen(this, pBIn, 1);
         pBHandler.start();
         pAHandler.start();
-        while(true){
-            if(this.getLoadComplete()){
+        while (true) {
+            if (this.getLoadComplete()) {
                 sendStartSelect();
                 this.setLoadComplete(false);
             }
-            if(this.getSelectComplete()){
+            if (this.getSelectComplete()) {
                 sendStartGame();
                 this.setSelectComplete(false);
             }
             System.out.println(selectComplete);
         }
     }
-    
-    public void sendStartSelect(){
+
+    public void sendStartSelect() {
         try {
             pAOut.writeObject(new Situation("startselect"));
             pBOut.writeObject(new Situation("startselect"));
@@ -89,48 +92,54 @@ public class Pvp extends Thread {
             System.out.println("send start select sitution error");
         }
     }
-    
-    public void sendStartGame(){
+
+    public void sendStartGame() {
         System.out.println("Send start game");
         try {
-            pAOut.writeObject(new Situation("startgame"));
-            pBOut.writeObject(new Situation("startgame"));
+            pAOut.writeObject(new Situation("startgame", pACareer));
+            pBOut.writeObject(new Situation("startgame", pBCareer));
         } catch (IOException ex) {
             System.out.println("send start select sitution error");
-        }        
+        }
     }
-    
-    public synchronized void setLoadComplete(int id){
-        if(id == 0)
+
+    public synchronized void setLoadComplete(int id) {
+        if (id == 0) {
             pALoadComplete = true;
-        else if(id == 1)
+        } else if (id == 1) {
             pBLoadComplete = true;
-        if( pALoadComplete && pBLoadComplete )
+        }
+        if (pALoadComplete && pBLoadComplete) {
             setLoadComplete(true);
+        }
     }
-    
-    public synchronized void setSelectComplete(int id){
-        if(id == 0)
+
+    public synchronized void setSelectComplete(int id, Career career) {
+        if (id == 0) {
             pASelectComplete = true;
-        else if(id == 1)
+            pBCareer = career;
+        } else if (id == 1) {
             pBSelectComplete = true;
-        if( pASelectComplete && pBSelectComplete )
+            pACareer = career;
+        }
+        if (pASelectComplete && pBSelectComplete) {
             setSelectComplete(true);
+        }
     }
-    
-    public synchronized void setSelectComplete(boolean value){
+
+    public synchronized void setSelectComplete(boolean value) {
         this.selectComplete = value;
     }
-    
-    public synchronized void setLoadComplete(boolean value){
+
+    public synchronized void setLoadComplete(boolean value) {
         this.loadComplete = value;
     }
-    
-    public synchronized boolean getSelectComplete(){
+
+    public synchronized boolean getSelectComplete() {
         return this.selectComplete;
     }
-    
-    public synchronized boolean getLoadComplete(){
+
+    public synchronized boolean getLoadComplete() {
         return this.loadComplete;
     }
 }

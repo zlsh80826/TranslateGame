@@ -11,7 +11,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import serialize.*;
 
-
 /**
  *
  * @author zlsh80826
@@ -28,7 +27,7 @@ public class WaitRoom extends Thread {
         this.player = socket;
         this.isRunning = true;
         this.time = 0;
-        
+
         try {
             this.in = new ObjectInputStream(player.getInputStream());
         } catch (IOException ex) {
@@ -39,7 +38,7 @@ public class WaitRoom extends Thread {
             this.out = new ObjectOutputStream(player.getOutputStream());
         } catch (IOException ex) {
             System.out.println("Create OutputStream with problem");
-        } 
+        }
     }
 
     @Override
@@ -53,16 +52,16 @@ public class WaitRoom extends Thread {
             }
         }
     }
-    
-    public void sendMessage(String message){
+
+    public void sendMessage(String message) {
         try {
             out.writeObject(new Message(message));
         } catch (IOException ex) {
             System.out.println("send message error");
         }
     }
-    
-    public void end() throws IOException{
+
+    public void end() throws IOException {
         out.writeObject(new PvpRoomType());
         isRunning = false;
     }
