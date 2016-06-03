@@ -5,7 +5,7 @@
  */
 package translategame;
 
-import de.looksgood.ani.Ani;
+import java.util.ArrayList;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
@@ -16,34 +16,51 @@ import processing.core.PImage;
  */
 public class Character {
     PApplet parent;
-    PImage[] images;
+    //PImage[] images;
+    ArrayList<ArrayList<PImage>> images;
+    ArrayList<Integer> imageCount;
+    ArrayList<String> fileName;
     int frame;
-    int imageCount;
     int count;
+    int action;
     float x;
     float y;
     
-    Character(PApplet parent, float x, float y, String imagePrefix, String imageSuffix, int imageCount){
+    Character(PApplet parent, float x, float y, String imagePrefix, String imageSuffix, ArrayList<Integer> imageCount){
         this.imageCount = imageCount;
         this.parent = parent;
         this.x = x;
         this.y = y;
-        images = new PImage[imageCount];
-        for(int i=0; i< imageCount; ++i){
-            String fileName = imagePrefix + nf(i, 3) + imageSuffix;
-            images[i] = parent.loadImage(fileName);
+        this.images = new ArrayList<ArrayList<PImage>>();
+        this.fileName = new ArrayList<String>();
+        this.fileName.add( "Attack" );
+        this.fileName.add( "AttackR" );
+        this.fileName.add( "Move" );
+        this.fileName.add( "MoveR" );
+        this.fileName.add( "Hit" );
+        this.fileName.add( "HitR" );
+        this.fileName.add( "Stand" );
+        this.fileName.add( "StandR" );
+        this.fileName.add( "Die" );
+        this.fileName.add( "DieR" );
+        
+        for(int j=0; j<10; ++j){ 
+            ArrayList<PImage> temp = new ArrayList<PImage>();
+            for(int i=0; i< imageCount.get(j); ++i){
+                String file_name = imagePrefix + fileName.get(j) + nf(i, 3) + imageSuffix;
+                temp.add(parent.loadImage(file_name));
+            }
+            images.add(temp);
         }
         this.count = 0;
+        this.action = 2;
     }
     
     void display(){
-        parent.image(images[frame], this.x - images[frame].width, this.y);
-        ++ count;
-        if(count % 12 == 0){
+        parent.image(images.get(action).get(frame), this.x - images.get(action).get(action).width, this.y);
+        if( ++count % 12 == 0){
             count = 0;
-            frame = (frame + 1) % imageCount;
-            Ani.to(this, 0.2f, "x", this.x - 15.0f, Ani.LINEAR);
-            System.out.println(x);
+            frame = (frame + 1) % imageCount.get(action);
         }
     }   
     
@@ -51,5 +68,6 @@ public class Character {
         this.x = x;
         this.y = y;
     }
+    
 }
 

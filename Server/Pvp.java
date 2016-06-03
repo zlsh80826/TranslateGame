@@ -28,7 +28,6 @@ public class Pvp extends Thread {
     
     
     public Pvp(Listener monitor, Socket pA, Socket pB){
-        System.out.println("QAQ");
         this.pA = pA;
         this.pB = pB;
         this.monitor = monitor;
