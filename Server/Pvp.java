@@ -28,6 +28,9 @@ public class Pvp extends Thread {
     boolean loadComplete = false;
     boolean pALoadComplete = false;
     boolean pBLoadComplete = false;
+    boolean selectComplete = false;
+    boolean pASelectComplete = false;
+    boolean pBSelectComplete = false;
     
     public Pvp(Listener monitor, Socket pA, Socket pB){
         this.pA = pA;
@@ -66,9 +69,15 @@ public class Pvp extends Thread {
         pBHandler.start();
         pAHandler.start();
         while(true){
-            if(loadComplete){
+            if(this.getLoadComplete()){
                 sendStartSelect();
+                this.setLoadComplete(false);
             }
+            if(this.getSelectComplete()){
+                sendStartGame();
+                this.setSelectComplete(false);
+            }
+            System.out.println(selectComplete);
         }
     }
     
@@ -81,12 +90,47 @@ public class Pvp extends Thread {
         }
     }
     
+    public void sendStartGame(){
+        System.out.println("Send start game");
+        try {
+            pAOut.writeObject(new Situation("startgame"));
+            pBOut.writeObject(new Situation("startgame"));
+        } catch (IOException ex) {
+            System.out.println("send start select sitution error");
+        }        
+    }
+    
     public synchronized void setLoadComplete(int id){
         if(id == 0)
             pALoadComplete = true;
         else if(id == 1)
             pBLoadComplete = true;
         if( pALoadComplete && pBLoadComplete )
-            loadComplete = true;
+            setLoadComplete(true);
+    }
+    
+    public synchronized void setSelectComplete(int id){
+        if(id == 0)
+            pASelectComplete = true;
+        else if(id == 1)
+            pBSelectComplete = true;
+        if( pASelectComplete && pBSelectComplete )
+            setSelectComplete(true);
+    }
+    
+    public synchronized void setSelectComplete(boolean value){
+        this.selectComplete = value;
+    }
+    
+    public synchronized void setLoadComplete(boolean value){
+        this.loadComplete = value;
+    }
+    
+    public synchronized boolean getSelectComplete(){
+        return this.selectComplete;
+    }
+    
+    public synchronized boolean getLoadComplete(){
+        return this.loadComplete;
     }
 }

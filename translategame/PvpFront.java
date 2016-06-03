@@ -8,6 +8,7 @@ package translategame;
 import de.looksgood.ani.Ani;
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PImage;
 import serialize.*;
 
 /**
@@ -23,6 +24,18 @@ public class PvpFront extends PApplet {
     Stage gameStage;
     LoadProgress loadProgress;
     StoryMap map;
+    MagicMan magicMan;
+    ArchMan archer;
+    SwordMan swordMan;
+    PImage selectBg;
+    float swordManSelectX = 290f;
+    float SelectY = 640f;
+    float magicManSelectX = 590f;
+    float archManSelectX = 890f;
+    float radius = 100f;
+    float selectModifyX = -35f;
+    float selectModifyY = -50f;
+    Career career;
 
     PvpFront(TranslateGame parent, PvpRear rear) {
         this.parent = parent;
@@ -33,8 +46,15 @@ public class PvpFront extends PApplet {
     public void initial() {
         baron = new Baron(this, 800f, 300f);
         map = new StoryMap(this, 0f, 0f);
+        magicMan = new MagicMan(this, magicManSelectX, SelectY);
+        magicMan.setReverse();
+        archer = new ArchMan(this, archManSelectX, SelectY);
+        archer.setReverse();
+        swordMan = new SwordMan(this, swordManSelectX, SelectY);
+        swordMan.setReverse();
+        selectBg = loadImage("material/map/selectBG.png");
         rear.sendLoadComplete();
-        System.out.println("loadComplete");
+        career = Career.UNCHOOSE;
         gameStage = Stage.SELECT;
     }
 
@@ -54,6 +74,11 @@ public class PvpFront extends PApplet {
         if (gameStage == Stage.INIT) {
             loadProgress.display();
         } else if (gameStage == Stage.SELECT) {
+            image(selectBg, -100, -26);
+            this.magicMan.display();
+            this.archer.display();
+            this.swordMan.display();
+        } else if (gameStage == Stage.START) {
             map.display();
             if (mouseX < 20) {
                 map.setX(map.getX() + 5);
@@ -102,7 +127,48 @@ public class PvpFront extends PApplet {
 
     @Override
     public void mouseMoved() {
+        if (gameStage == Stage.SELECT && (career == Career.UNCHOOSE) ) {
+            frameRate(60);
+            if (dist(this.swordManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
+                this.swordMan.setAttack();
+                this.swordMan.introduction();
+            } else if (dist(this.magicManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
+                this.magicMan.setAttack();
+                this.magicMan.introduction();
+            } else if (dist(this.archManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
+                this.archer.setAttack();
+                this.archer.introduction();
+            } else {
+                this.swordMan.setStand();
+                this.swordMan.hideIntroduction();
+                this.magicMan.setStand();
+                this.magicMan.hideIntroduction();
+                this.archer.setStand();
+                this.archer.hideIntroduction();
+            }
+        }
+    }
 
+    @Override
+    public void mouseClicked() {
+        if (gameStage == Stage.SELECT && (career == Career.UNCHOOSE) ) {
+            frameRate(60);
+            if (dist(this.swordManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
+                this.career = Career.SwordMan;
+            } else if (dist(this.magicManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
+                this.career = Career.MagicMan;
+            } else if (dist(this.archManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
+                this.career = Career.Archer;
+            } else {
+                this.career = Career.UNCHOOSE;
+            }
+            this.rear.sendSelectComplete();
+        }
+    }
+    
+    public void startGame(){
+        this.gameStage = Stage.START;
+        System.out.println( "StartGame" );
     }
 
 }

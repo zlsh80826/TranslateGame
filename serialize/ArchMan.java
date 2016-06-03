@@ -15,7 +15,7 @@ import processing.core.PImage;
  *
  * @author zlsh80826
  */
-public class SwordMan implements Serializable{
+public class ArchMan implements Serializable{
     PApplet parent;
     ArrayList<ArrayList<PImage>> images;
     ArrayList<Integer> imageCount;
@@ -33,7 +33,7 @@ public class SwordMan implements Serializable{
     // attack
     // climb
     
-    public SwordMan(PApplet parent, float x, float y){
+    public ArchMan(PApplet parent, float x, float y){
         this.frame = new ArrayList<Integer>();
         for(int i=0; i<10; ++i)
             frame.add(0);
@@ -44,8 +44,8 @@ public class SwordMan implements Serializable{
         this.imageCount.add(4);
         this.imageCount.add(3);
         this.imageCount.add(3);
-        this.imageCount.add(4);
-        this.imageCount.add(4);
+        this.imageCount.add(3);
+        this.imageCount.add(3);
         this.imageCount.add(2);
         this.imageCount.add(2);
 
@@ -66,7 +66,7 @@ public class SwordMan implements Serializable{
 
         this.reverse = false;
         
-        String imagePrefix = "material/character/Sword/Sword";
+        String imagePrefix = "material/character/Bow/Bow";
         String imageSuffix = ".png";
         
         this.images = new ArrayList<ArrayList<PImage>>();
@@ -92,7 +92,7 @@ public class SwordMan implements Serializable{
         }
         
         if(revealIntroducion){
-            parent.text("SwordMan", 574, 200);
+            parent.text("Archer", 574, 200);
         }
     }   
     
@@ -133,7 +133,7 @@ public class SwordMan implements Serializable{
     
     int getAction(){
         return action + this.getReverse();
-    }   
+    }  
     
     public void introduction(){
         revealIntroducion = true;

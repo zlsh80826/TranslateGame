@@ -47,7 +47,7 @@ public class StoryMap implements Serializable {
     }
     
     public void display(){
-        controlSeed = (controlSeed+1) % 3;
+        controlSeed = (controlSeed+1) % 8;
         if(controlSeed == 0)
             frame = (frame + 1) % (imageCount);
         parent.image(bg, x-5, y + offsetY);

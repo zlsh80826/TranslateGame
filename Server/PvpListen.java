@@ -47,6 +47,8 @@ public class PvpListen extends Thread {
         System.out.println("Status:" + pkg.getStatus());
         if( "loadcomplete".equals(pkg.getStatus()) ){
             parent.setLoadComplete(identify);
+        } else if("selectcomplete".equals(pkg.getStatus())){
+            parent.setSelectComplete(identify);
         }
     }
 }

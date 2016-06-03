@@ -44,11 +44,8 @@ public class PvpRear extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Rear run");
-        //front.init();
-        System.out.println("Init complete");
         while (isRunning) {
-            Request request = recv();
+            recv();
             
             //need implements
         }
@@ -63,22 +60,40 @@ public class PvpRear extends Thread {
         this.front.stop();
     }
 
-    public Request recv() {
+    public void recv() {
         try {
-            Request request = (Request) in.readObject();
-            return request;
+            Object obj = in.readObject();
+            System.out.println("Recv obj...");
+            if(obj instanceof Situation){
+                this.parseSituation((Situation)obj);
+            }else{
+                System.out.println("Client recv unrecognize packet");
+            }
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(WaitRoomRear.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+        }
+    }
+    
+    void parseSituation(Situation status){
+        System.out.println("Status: " + status.getStatus());
+        if("startgame".equals(status.getStatus())){
+            front.startGame();
         }
     }
     
     public void sendLoadComplete(){
-        System.out.println("loadcomplete");
         try {
             out.writeObject(new Situation("loadcomplete"));
         } catch (IOException ex) {
             System.out.println("send complete status error");
         }
+    }
+    
+    public void sendSelectComplete(){
+        try {
+            out.writeObject(new Situation("selectcomplete"));
+        } catch (IOException ex) {
+            System.out.println("send complete status error");
+        }        
     }
 }
