@@ -18,6 +18,7 @@ public class PvpFront extends PApplet{
     PvpRear rear;
     //Character character;
     Mushroom mushroom;
+    Baron baron;
     PvpFront(TranslateGame parent, PvpRear rear){
         this.parent = parent;
         this.rear = rear;
@@ -34,7 +35,8 @@ public class PvpFront extends PApplet{
         temp.add(3);
         this.character = new Character(this, 800f, 0f, "material/monster/Mushroom/Mushroom", ".png", temp);*/
         //this.character = new Character(this, 800f, 300f, "material/monster/Mushroom/MushroomMove", ".png", 3);
-        mushroom = new Mushroom(this, 300f, 300f);
+        //mushroom = new Mushroom(this, 300f, 300f);
+        baron = new Baron(this, 800f, 300f);
     }
     
     @Override
@@ -48,22 +50,29 @@ public class PvpFront extends PApplet{
     public void draw(){
         background(255);
         //this.character.display();
-        this.mushroom.display();
+        //this.mushroom.display();
+        this.baron.display();
     }
     
     @Override
     public void keyPressed(){
         if(key == 's'){
-            mushroom.setStand();
+            this.baron.setStand();
         }
         if(key == 'd'){
-            mushroom.setDie();
+            this.baron.setDie();
         }
         if(key == 'm'){
-            mushroom.setMove();
+            this.baron.setMove();
         }
         if(key == 'h'){
-            mushroom.setHit();
+            this.baron.setHit();
+        }
+        if(key == 'r'){
+            this.baron.setReverse();
+        }
+        if(key == 'a'){
+            this.baron.setAttack();
         }
     }
 
