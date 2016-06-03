@@ -7,56 +7,75 @@ package translategame;
 
 import de.looksgood.ani.Ani;
 import processing.core.PApplet;
+import processing.core.PFont;
 import serialize.*;
 
 /**
  *
  * @author zlsh80826
  */
-public class PvpFront extends PApplet{
+public class PvpFront extends PApplet {
+
     TranslateGame parent;
     PvpRear rear;
-    //Character character;
     Mushroom mushroom;
     Baron baron;
-    PvpFront(TranslateGame parent, PvpRear rear){
+    Stage gameStage;
+    LoadProgress loadProgress;
+    StoryMap map;
+
+    PvpFront(TranslateGame parent, PvpRear rear) {
         this.parent = parent;
         this.rear = rear;
-        /*ArrayList<Integer> temp = new ArrayList<Integer>();
-        temp.add(0);
-        temp.add(0);
-        temp.add(3);
-        temp.add(3);
-        temp.add(0);
-        temp.add(0);
-        temp.add(2);
-        temp.add(2);
-        temp.add(3);
-        temp.add(3);
-        this.character = new Character(this, 800f, 0f, "material/monster/Mushroom/Mushroom", ".png", temp);*/
-        //this.character = new Character(this, 800f, 300f, "material/monster/Mushroom/MushroomMove", ".png", 3);
-        //mushroom = new Mushroom(this, 300f, 300f);
-        baron = new Baron(this, 800f, 300f);
+        loadProgress = new LoadProgress(this);
     }
-    
+
+    public void initial() {
+        baron = new Baron(this, 800f, 300f);
+        map = new StoryMap(this, 0f, 0f);
+        rear.sendLoadComplete();
+        System.out.println("loadComplete");
+        gameStage = Stage.SELECT;
+    }
+
     @Override
-    public void setup(){
+    public void setup() {
         size(1134, 704);
         smooth();
         Ani.init(this);
+        gameStage = Stage.INIT;
+        PFont font = this.createFont("src/material/Tekton.otf", 64, true);
+        textFont(font);
     }
-    
+
     @Override
-    public void draw(){
+    public void draw() {
         background(255);
+        if (gameStage == Stage.INIT) {
+            loadProgress.display();
+        } else if (gameStage == Stage.SELECT) {
+            map.display();
+            if (mouseX < 20) {
+                map.setX(map.getX() + 5);
+            } else if (mouseX > 1114) {
+                map.setX(map.getX() - 5);
+            }
+
+            if (mouseY < 20) {
+                map.setY(map.getY() + 5);
+            } else if (mouseY > 600) {
+                map.setY(map.getY() - 5);
+            }
+        }
+
         //this.character.display();
         //this.mushroom.display();
-        this.baron.display();
+        //this.baron.display();
     }
-    
+
     @Override
-    public void keyPressed(){
-        if(key == 's'){
+    public void keyPressed() {
+        /*if(key == 's'){
             this.baron.setStand();
         }
         if(key == 'd'){
@@ -73,12 +92,17 @@ public class PvpFront extends PApplet{
         }
         if(key == 'a'){
             this.baron.setAttack();
-        }
+        }*/
     }
 
     @Override
-    public void keyReleased(){
-        
-    }    
-    
+    public void keyReleased() {
+
+    }
+
+    @Override
+    public void mouseMoved() {
+
+    }
+
 }

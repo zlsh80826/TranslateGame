@@ -52,7 +52,6 @@ public class WaitRoom extends Thread {
                 System.out.println("Thread Interrupt.");
             }
         }
-        System.out.println("exit loop");
     }
     
     public void sendMessage(String message){

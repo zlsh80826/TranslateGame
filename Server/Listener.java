@@ -40,7 +40,6 @@ public class Listener implements Runnable{
     @Override
     public void run() {
         while(true){
-            System.out.println(playerWaitCounter);
             if(playerWaitCounter == 0){
                 try {
                     player1 = listenSocket.accept();

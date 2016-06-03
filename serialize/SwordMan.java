@@ -15,7 +15,7 @@ import processing.core.PImage;
  *
  * @author zlsh80826
  */
-public class Dinosaur implements Serializable{
+public class SwordMan implements Serializable{
     PApplet parent;
     ArrayList<ArrayList<PImage>> images;
     ArrayList<Integer> imageCount;
@@ -28,25 +28,17 @@ public class Dinosaur implements Serializable{
     boolean reverse;
     // stand 
     // move
-    // hit 
-    // die
-    // attack
     
-    public Dinosaur(PApplet parent, float x, float y){
+    public SwordMan(PApplet parent, float x, float y){
         this.frame = new ArrayList<Integer>();
-        for(int i=0; i<10; ++i)
+        for(int i=0; i<4; ++i)
             frame.add(0);
         this.imageCount = new ArrayList<Integer>();
-        this.imageCount.add(6);
-        this.imageCount.add(6);
         this.imageCount.add(4);
         this.imageCount.add(4);
-        this.imageCount.add(1);
-        this.imageCount.add(1);
-        this.imageCount.add(9);
-        this.imageCount.add(9);
-        this.imageCount.add(19);
-        this.imageCount.add(19);
+        this.imageCount.add(3);
+        this.imageCount.add(3);
+
         this.parent = parent;
         this.x = x;
         this.y = y;
@@ -55,15 +47,10 @@ public class Dinosaur implements Serializable{
         this.fileName.add( "StandR" );
         this.fileName.add( "Move" );
         this.fileName.add( "MoveR" );
-        this.fileName.add( "Hit" );
-        this.fileName.add( "HitR" );
-        this.fileName.add( "Die" );
-        this.fileName.add( "DieR" );
-        this.fileName.add( "Attack" );
-        this.fileName.add( "AttackR" );
+
         this.reverse = false;
         
-        String imagePrefix = "material/monster/Dinosaur/Dinosaur";
+        String imagePrefix = "material/character/Sword/SwordStand";
         String imageSuffix = ".png";
         
         this.images = new ArrayList<ArrayList<PImage>>();
@@ -81,7 +68,7 @@ public class Dinosaur implements Serializable{
     
     public void display(){
         parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width,
-                    this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height);
+                      this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height);
         if( ++count % 12 == 0){
             count = 0;
             int temp = (frame.get(this.getAction())+1) % (imageCount.get(this.getAction()));

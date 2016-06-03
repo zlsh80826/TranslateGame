@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import serialize.Request;
+import serialize.*;
 
 /**
  *
@@ -25,7 +25,9 @@ public class Pvp extends Thread {
     ObjectOutputStream pAOut;
     ObjectOutputStream pBOut;
     Listener monitor;
-    
+    boolean loadComplete = false;
+    boolean pALoadComplete = false;
+    boolean pBLoadComplete = false;
     
     public Pvp(Listener monitor, Socket pA, Socket pB){
         this.pA = pA;
@@ -43,32 +45,48 @@ public class Pvp extends Thread {
             System.out.println("pBInputStream init error");
         }
         
-        System.out.println("InOK");
         try {
             pAOut = new ObjectOutputStream(pA.getOutputStream());
         } catch (IOException ex) {
             System.out.println("OutputStream init error");
         }
-        System.out.println("paOk");
+
         try {
             pBOut = new ObjectOutputStream(pB.getOutputStream());
         } catch (IOException ex) {
             Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("pbOk");
-        System.out.println("Connection establish");
-        try {
-            pBOut.writeObject(new Request("ya"));
-            pBOut.flush();
-        } catch (IOException ex) {
-            System.out.println("write error");
-        }
+        
     }
     
     @Override
     public void run(){
-        while(true)
-            System.out.println("YA");
+        PvpListen pAHandler = new PvpListen(this, pAIn, 0);
+        PvpListen pBHandler = new PvpListen(this, pBIn, 1);
+        pBHandler.start();
+        pAHandler.start();
+        while(true){
+            if(loadComplete){
+                sendStartSelect();
+            }
+        }
     }
     
+    public void sendStartSelect(){
+        try {
+            pAOut.writeObject(new Situation("startselect"));
+            pBOut.writeObject(new Situation("startselect"));
+        } catch (IOException ex) {
+            System.out.println("send start select sitution error");
+        }
+    }
+    
+    public synchronized void setLoadComplete(int id){
+        if(id == 0)
+            pALoadComplete = true;
+        else if(id == 1)
+            pBLoadComplete = true;
+        if( pALoadComplete && pBLoadComplete )
+            loadComplete = true;
+    }
 }

@@ -81,6 +81,7 @@ public class TranslateGame {
         pvpFront.init();
         pvpRear.start();
         pvpFront.start();
+        pvpRear.front.initial();
     }
 
     static public void main(String[] args) {

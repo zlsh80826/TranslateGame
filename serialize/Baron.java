@@ -80,7 +80,7 @@ public class Baron implements Serializable {
     }
     
     public void display(){
-        parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width, this.y);
+        parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width, this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height);
         if( ++count % 12 == 0){
             count = 0;
             int temp = (frame.get(this.getAction())+1) % (imageCount.get(this.getAction()));

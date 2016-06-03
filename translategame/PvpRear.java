@@ -44,6 +44,9 @@ public class PvpRear extends Thread {
 
     @Override
     public void run() {
+        System.out.println("Rear run");
+        //front.init();
+        System.out.println("Init complete");
         while (isRunning) {
             Request request = recv();
             
@@ -67,6 +70,15 @@ public class PvpRear extends Thread {
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(WaitRoomRear.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        }
+    }
+    
+    public void sendLoadComplete(){
+        System.out.println("loadcomplete");
+        try {
+            out.writeObject(new Situation("loadcomplete"));
+        } catch (IOException ex) {
+            System.out.println("send complete status error");
         }
     }
 }
