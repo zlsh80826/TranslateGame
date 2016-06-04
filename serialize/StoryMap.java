@@ -51,8 +51,8 @@ public class StoryMap implements Serializable {
         obstacles = new ArrayList<Obstacle>();
         obstacles.add(new Obstacle(this.parent, 0f, 590f, 1500f, 50f, this));
         obstacles.add(new Obstacle(this.parent, 0f, 170f, 380f, 50f, this));
-        obstacles.add(new Obstacle(this.parent, 1140f, 170f, 360f, 50f, this));
-        obstacles.add(new Obstacle(this.parent, 470f, 320f, 590f, 50f, this));
+        obstacles.add(new Obstacle(this.parent, 1100f, 170f, 400f, 50f, this));
+        obstacles.add(new Obstacle(this.parent, 430f, 320f, 630f, 50f, this));
     }
 
     public void display() {

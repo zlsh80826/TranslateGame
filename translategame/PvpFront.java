@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
+import processing.core.PVector;
 import serialize.*;
 
 /**
@@ -38,6 +39,7 @@ public class PvpFront extends PApplet {
     float selectModifyY = -50f;
     float bgOffsetX;
     float bgOffsetY;
+    PFont font;
     Career career;
     serialize.Character hero;
     serialize.Character enemy;
@@ -60,8 +62,8 @@ public class PvpFront extends PApplet {
         selectBg = loadImage("material/map/selectBG.png");
 
         doors = new ArrayList<Door>();
-        doors.add(new Door(this, 400, 590, map));
-        doors.add(new Door(this, 1220, 590, map));
+        doors.add(new Door(this, 400, 590, map, 1300, 170));
+        doors.add(new Door(this, 1220, 590, map, 100, 170));
 
         revPt = new ArrayList<RevivePoint>();
         revPt.add(new RevivePoint(this, 180, 595, map));
@@ -90,7 +92,7 @@ public class PvpFront extends PApplet {
         smooth();
         Ani.init(this);
         gameStage = Stage.INIT;
-        PFont font = this.createFont("src/material/Tekton.otf", 64, true);
+        font = this.createFont("src/material/Tekton.otf", 64, true);
         textFont(font);
     }
 
@@ -107,6 +109,7 @@ public class PvpFront extends PApplet {
         } else if (gameStage == Stage.START) {
             map.display();
             this.hero.display();
+            this.hero.displayInfo();
             this.enemy.display();
             this.rear.sendInfo(this.hero.getInfo());
             doors.stream().forEach((door) -> {
@@ -129,20 +132,28 @@ public class PvpFront extends PApplet {
                 this.hero.setClimb();
             } else if (key == 'm') {
                 this.hero.setMove();
+                this.hero.curMp -= 50;
             } else if (key == 'h') {
                 this.hero.setHit();
+                this.hero.curMp += 50;
             } else if (key == 'r') {
                 this.hero.setReverse();
+                this.hero.curHp += 50;
             } else if (key == 'a') {
                 this.hero.setAttack();
+                this.hero.curHp -= 50;
             } else if (keyCode == LEFT && this.hero.isDroping == false) {
                 this.hero.setLeft(map);
                 this.hero.setMove();
             } else if (keyCode == RIGHT && this.hero.isDroping == false) {
                 this.hero.setRight(map);
                 this.hero.setMove();
-            } else if( keyCode == ALT){
+            } else if (keyCode == ALT) {
                 this.hero.jump();
+            } else if (keyCode == UP) {
+                doors.stream().map((door) -> door.trnasport(this.hero.x, this.hero.y)).filter((point) -> (point != null)).forEach((point) -> {
+                    this.hero.setTransPort(point.x, point.y);
+                });
             }
         }
     }
@@ -217,6 +228,7 @@ public class PvpFront extends PApplet {
         this.rear.sendInfo(this.hero.getInfo());
         this.gameStage = Stage.START;
         this.frameRate(60);
+        textFont(font, 32);
     }
 
     public Stage getStage() {

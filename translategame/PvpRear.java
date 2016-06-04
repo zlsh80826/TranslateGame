@@ -63,7 +63,7 @@ public class PvpRear extends Thread {
     public void recv() {
         try {
             Object obj = in.readObject();
-            System.out.println("Recv obj...");
+            //System.out.println("Recv obj...");
             if (obj instanceof Situation) {
                 this.parseSituation((Situation) obj);
             } else if(obj instanceof Info){

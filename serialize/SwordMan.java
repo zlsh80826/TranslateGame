@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
+import processing.opengl.PShader;
 import translategame.PvpFront;
 
 /**
@@ -70,11 +71,16 @@ public class SwordMan extends Character implements Serializable {
         }
 
         this.map = map;
-
+        this.LV = 1;
+        this.MaxHp = (int)(1000 * Math.pow(1.1, LV));
+        this.curHp = MaxHp;
+        this.MaxMp = (int)(200 * Math.pow(1.1, LV));
+        this.curMp = MaxMp;
     }
 
     @Override
     public void display() {
+        super.display();
         parent.ellipse(x, y, 10, 10);
         if ((reverse == true && action != 6) || (action == 6 && reverse == false)) {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),

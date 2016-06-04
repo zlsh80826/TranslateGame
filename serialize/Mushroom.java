@@ -26,6 +26,7 @@ public class Mushroom implements Serializable{
     float x;
     float y;
     boolean reverse;
+    
     // stand 
     // move
     // hit 

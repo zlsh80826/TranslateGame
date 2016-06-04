@@ -7,6 +7,7 @@ package serialize;
 
 import de.looksgood.ani.Ani;
 import java.util.ArrayList;
+import static processing.core.PApplet.nf;
 import processing.core.PImage;
 import translategame.PvpFront;
 
@@ -15,6 +16,7 @@ import translategame.PvpFront;
  * @author zlsh80826
  */
 public abstract class Character {
+
     public float x;
     public float y;
     public boolean jumping;
@@ -29,6 +31,13 @@ public abstract class Character {
     int action;
     boolean reverse;
     boolean revealIntroducion;
+    public int curHp;
+    public int MaxHp;
+    public int LV;
+    public int exp;
+    public int MaxMp;
+    public int curMp;
+    int[] expTable = {15, 34, 57, 92, 135, 372, 560, 840, 1242, 1490, 2145, 3088, 4446, 6402};
     StoryMap map;
 
     public Character() {
@@ -44,11 +53,48 @@ public abstract class Character {
         this.action = 0;
     }
 
-    public abstract void display();
-    
-    public void setPos(float x, float y) {
-        this.x = x;
-        this.y = y;
+    public void display() {
+        float green = 80 * curHp / MaxHp;
+        float red = 80 - green;
+        parent.noStroke();
+        parent.fill(77, 255, 77);
+        parent.rect(this.x + 10 + map.getX(), this.y - 108, green, 8, 3);
+        parent.fill(255, 77, 77);
+        parent.rect(this.x + 10 + map.getX() + green, this.y - 108, red, 8, 3);
+
+        float blue = 80 * curMp / MaxMp;
+        float nblue = 80 - blue;
+        parent.fill(77, 77, 255);
+        parent.rect(this.x + 10 + map.getX(), this.y - 100, blue, 8, 3);
+        parent.fill(10, 10, 10, 200);
+        parent.rect(this.x + 10 + map.getX() + blue, this.y - 100, nblue, 8, 3);
+    }
+
+    public void displayInfo() {
+        String lvStr = "Lv: " + nf(LV, 2);
+        String hpStr = "Hp: " + curHp + " / " + MaxHp;
+        String mpStr = "Mp: " + curMp + " / " + MaxMp;
+        parent.fill(0);
+        parent.stroke(77, 255, 77);
+        parent.strokeWeight(3);
+        parent.text(lvStr, 900, 50);
+        parent.text(hpStr, 900, 100);
+        parent.text(mpStr, 900, 150);
+    }
+
+    public void setPos(float newX, float newY) {
+        this.x = newX;
+        this.y = newY;
+    }
+
+    public void setTransPort(float newX, float newY) {
+        if (newX > 1040) {
+            map.setX(-340);
+        } else if (newX < 150) {
+            map.setX(0);
+        }
+        this.x = newX;
+        this.y = newY;
     }
 
     public void setStand() {
@@ -121,7 +167,7 @@ public abstract class Character {
         }
         Ani.to(this, 0.015f, "x", x + 15, Ani.LINEAR);
         if (x > 1000 && x < 1440) {
-            map.setX(map.getX() - 20);
+            map.setX(map.getX() - 25);
         }
     }
 

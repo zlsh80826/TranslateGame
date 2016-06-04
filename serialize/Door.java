@@ -8,6 +8,7 @@ package serialize;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
+import processing.core.PVector;
 
 /**
  *
@@ -17,6 +18,7 @@ public class Door {
 
     float x;
     float y;
+    float radius;
     int frame;
     int imageCount;
     int controlSeed;
@@ -25,8 +27,9 @@ public class Door {
     PImage[] images;
     PApplet parent;
     StoryMap map;
+    PVector point;
 
-    public Door(PApplet parent, float x, float y, StoryMap map) {
+    public Door(PApplet parent, float x, float y, StoryMap map, float pointX, float pointY) {
         this.parent = parent;
         this.x = x;
         this.y = y;
@@ -34,6 +37,9 @@ public class Door {
         this.imageCount = 14;
         this.controlSeed = 0;
         this.map = map;
+        this.radius = 30;
+        point = new PVector();
+        this.point.set(pointX, pointY);
 
         String imagePrefix = "material/map/Door";
         String imageSuffix = ".png";
@@ -51,6 +57,18 @@ public class Door {
         if (controlSeed == 0) {
             frame = (frame + 1) % (imageCount);
         }
-        parent.image(images[frame], x-images[frame].width + map.getX(), y-images[frame].height + map.getY());
+        parent.image(images[frame], x - images[frame].width + map.getX(), y - images[frame].height + map.getY());
     }    
+    
+    public void setPoint(float x, float y){
+        point.set(x, y);
+    }
+    
+    public PVector trnasport(float chX, float chY){
+        System.out.println(chX + " " + chY + " " + x + y);
+        if( PApplet.dist(chX, chY, x - images[frame].width, y) < 50 )
+            return point;
+        else
+            return null;
+    }
 }

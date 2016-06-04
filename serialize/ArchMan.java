@@ -72,10 +72,16 @@ public class ArchMan extends Character implements Serializable {
         }
 
         this.map = map;
+        this.LV = 1;
+        this.MaxHp = (int)(800 * Math.pow(1.1, LV));
+        this.curHp = MaxHp;
+        this.MaxMp = (int)(300 * Math.pow(1.1, LV));
+        this.curMp = MaxMp;
     }
 
     @Override
     public void display() {
+        super.display();
         if (reverse == true) {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
                     this.x - getWidth() + offset.get(this.getAction()) + map.getX(),
