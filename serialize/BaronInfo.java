@@ -13,4 +13,8 @@ import java.io.Serializable;
  */
 public class BaronInfo extends MonsterInfo implements Serializable  {
     
+    public BaronInfo(float x, float y, boolean reverse, int action, int curHp) {
+        super(x, y, reverse, action, curHp);
+    }
+    
 }

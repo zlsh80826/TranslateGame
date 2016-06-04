@@ -15,27 +15,16 @@ import processing.core.PImage;
  *
  * @author zlsh80826
  */
-public class Mushroom implements Serializable{
-    PApplet parent;
-    ArrayList<ArrayList<PImage>> images;
-    ArrayList<Integer> imageCount;
-    ArrayList<String> fileName;
-    ArrayList<Integer> frame;
-    int count;
-    int action;
-    float x;
-    float y;
-    boolean reverse;
-    
+public class Mushroom extends Monster  implements Serializable {
     // stand 
     // move
     // hit 
     // die
-    
-    public Mushroom(PApplet parent, float x, float y){
+    public Mushroom(PApplet parent, float x, float y, StoryMap map) {
         this.frame = new ArrayList<Integer>();
-        for(int i=0; i<8; ++i)
+        for (int i = 0; i < 8; ++i) {
             frame.add(0);
+        }
         this.imageCount = new ArrayList<Integer>();
         this.imageCount.add(2);
         this.imageCount.add(2);
@@ -49,23 +38,24 @@ public class Mushroom implements Serializable{
         this.x = x;
         this.y = y;
         this.fileName = new ArrayList<String>();
-        this.fileName.add( "Stand" );
-        this.fileName.add( "StandR" );
-        this.fileName.add( "Move" );
-        this.fileName.add( "MoveR" );
-        this.fileName.add( "Hit" );
-        this.fileName.add( "HitR" );
-        this.fileName.add( "Die" );
-        this.fileName.add( "DieR" );
+        this.fileName.add("Stand");
+        this.fileName.add("StandR");
+        this.fileName.add("Move");
+        this.fileName.add("MoveR");
+        this.fileName.add("Hit");
+        this.fileName.add("HitR");
+        this.fileName.add("Die");
+        this.fileName.add("DieR");
         this.reverse = false;
-        
+        this.map = map;
+
         String imagePrefix = "material/monster/Mushroom/Mushroom";
         String imageSuffix = ".png";
-        
+
         this.images = new ArrayList<ArrayList<PImage>>();
-        for(int j=0; j<fileName.size(); ++j){ 
+        for (int j = 0; j < fileName.size(); ++j) {
             ArrayList<PImage> temp = new ArrayList<PImage>();
-            for(int i=0; i< imageCount.get(j); ++i){
+            for (int i = 0; i < imageCount.get(j); ++i) {
                 String file_name = imagePrefix + fileName.get(j) + nf(i, 3) + imageSuffix;
                 temp.add(parent.loadImage(file_name));
             }
@@ -73,50 +63,35 @@ public class Mushroom implements Serializable{
         }
         this.count = 0;
         this.action = 0;
+        this.active = false;
     }
-    
-    public void display(){
-        parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width,
-                this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height);
-        if( ++count % 12 == 0){
-            count = 0;
-            int temp = (frame.get(this.getAction())+1) % (imageCount.get(this.getAction()));
-            frame.set(this.getAction(), temp );
+
+    public void display() {
+        if(active){
+            parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
+                    this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width + map.getX(),
+                    this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height + map.getY());
+            if (++count % 12 == 0) {
+                count = 0;
+                int temp = (frame.get(this.getAction()) + 1) % (imageCount.get(this.getAction()));
+                frame.set(this.getAction(), temp);
+            }
         }
-    }   
-    
-    public void setPos(float x, float y){
-        this.x = x;
-        this.y = y;
-    }    
-    
-    public void setStand(){
+    }
+
+    public void setStand() {
         action = 0;
     }
-    
-    public void setMove(){
+
+    public void setMove() {
         action = 2;
     }
-    
-    public void setHit(){
+
+    public void setHit() {
         action = 4;
     }
-    
-    public void setDie(){
+
+    public void setDie() {
         action = 6;
-    }
-    
-    public void setReverse(){
-        reverse = !reverse;
-    }
-    
-    int getReverse(){
-       if(reverse == true) 
-           return 1;
-       return 0;
-    }
-    
-    int getAction(){
-        return action + this.getReverse();
     }
 }

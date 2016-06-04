@@ -15,24 +15,14 @@ import processing.core.PImage;
  *
  * @author zlsh80826
  */
-public class Snow implements Serializable{
-    PApplet parent;
-    ArrayList<ArrayList<PImage>> images;
-    ArrayList<Integer> imageCount;
-    ArrayList<String> fileName;
-    ArrayList<Integer> frame;
-    int count;
-    int action;
-    float x;
-    float y;
-    boolean reverse;
+public class Snow extends Monster  implements Serializable{
     // stand 
     // move
     // hit 
     // die
     // attack
     
-    public Snow(PApplet parent, float x, float y){
+    public Snow(PApplet parent, float x, float y, StoryMap map){
         this.frame = new ArrayList<Integer>();
         for(int i=0; i<10; ++i)
             frame.add(0);
@@ -62,6 +52,7 @@ public class Snow implements Serializable{
         this.fileName.add( "Attack" );
         this.fileName.add( "AttackR" );
         this.reverse = false;
+        this.map = map;
         
         String imagePrefix = "material/monster/Snow/Snow";
         String imageSuffix = ".png";
@@ -77,22 +68,21 @@ public class Snow implements Serializable{
         }
         this.count = 0;
         this.action = 0;
+        this.active = true;
     }
     
     public void display(){
-        parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width,
-                      this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height);
-        if( ++count % 12 == 0){
-            count = 0;
-            int temp = (frame.get(this.getAction())+1) % (imageCount.get(this.getAction()));
-            frame.set(this.getAction(), temp );
+        if(active){
+            parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
+                    this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width + map.getX(),
+                    this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height + map.getY());
+            if( ++count % 12 == 0){
+                count = 0;
+                int temp = (frame.get(this.getAction())+1) % (imageCount.get(this.getAction()));
+                frame.set(this.getAction(), temp );
+            }
         }
     }   
-    
-    public void setPos(float x, float y){
-        this.x = x;
-        this.y = y;
-    }    
     
     public void setStand(){
         action = 0;
@@ -109,22 +99,10 @@ public class Snow implements Serializable{
     public void setDie(){
         action = 6;
     }
-    
-    public void setReverse(){
-        reverse = !reverse;
-    }
+
     
     public void setAttack(){
         action = 8;
     }
-    
-    int getReverse(){
-       if(reverse == true) 
-           return 1;
-       return 0;
-    }
-    
-    int getAction(){
-        return action + this.getReverse();
-    }        
+  
 }

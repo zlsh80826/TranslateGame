@@ -36,8 +36,8 @@ public class PvpListen extends Thread {
 
     public void recv() {
         try {
-            Object pkg = (Object) in.readObject();
-            System.out.println("Recv Obj...");
+            SerialItem pkg = (SerialItem) in.readObject();
+            //System.out.println("Recv Obj...");
             if (pkg instanceof Situation) {
                 parseSituation((Situation) pkg);
             } else if(pkg instanceof Info){

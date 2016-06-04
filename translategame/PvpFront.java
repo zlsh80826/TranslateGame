@@ -21,8 +21,6 @@ public class PvpFront extends PApplet {
 
     TranslateGame parent;
     PvpRear rear;
-    Mushroom mushroom;
-    Baron baron;
     Stage gameStage;
     LoadProgress loadProgress;
     StoryMap map;
@@ -45,6 +43,10 @@ public class PvpFront extends PApplet {
     serialize.Character enemy;
     ArrayList<Door> doors;
     ArrayList<RevivePoint> revPt;
+    ArrayList<Baron> barons;
+    ArrayList<Mushroom> mushrooms;
+    ArrayList<Snow> snows;
+    ArrayList<Dinosaur> dinosaurs;
 
     PvpFront(TranslateGame parent, PvpRear rear) {
         this.parent = parent;
@@ -79,7 +81,23 @@ public class PvpFront extends PApplet {
         career = Career.UNCHOOSE;
 
         // monster
-        baron = new Baron(this, 800f, 300f);
+        barons = new ArrayList<Baron>();
+        barons.add(new Baron(this, 300f, 300f, map));
+
+        mushrooms = new ArrayList<Mushroom>();
+        for (int i = 0; i < 10; ++i) {
+            mushrooms.add(new Mushroom(this, 300f, 300f, map));
+        }
+
+        snows = new ArrayList<Snow>();
+        for (int i = 0; i < 3; ++i) {
+            snows.add(new Snow(this, 300f, 300f, map));
+        }
+
+        dinosaurs = new ArrayList<Dinosaur>();
+        for (int i = 0; i < 4; ++i) {
+            dinosaurs.add(new Dinosaur(this, 300f, 300f, map));
+        }
 
         // complete protocaol
         rear.sendLoadComplete();
@@ -112,12 +130,29 @@ public class PvpFront extends PApplet {
             this.hero.displayInfo();
             this.enemy.display();
             this.rear.sendInfo(this.hero.getInfo());
+            
             doors.stream().forEach((door) -> {
                 door.display();
             });
 
             revPt.stream().forEach((revpt) -> {
                 revpt.display();
+            });
+
+            barons.stream().forEach((baron) -> {
+                baron.display();
+            });
+            
+            mushrooms.stream().forEach((mushroom) -> {
+                mushroom.display();
+            });
+            
+            snows.stream().forEach((snow) -> {
+                snow.display();
+            });
+            
+            dinosaurs.stream().forEach((Dinosaur dinosaur) -> {
+                dinosaur.display();
             });
 
         }
@@ -229,9 +264,40 @@ public class PvpFront extends PApplet {
         this.gameStage = Stage.START;
         this.frameRate(60);
         textFont(font, 32);
+
+        barons.stream().forEach((baron) -> {
+            baron.active = true;
+        });
+        mushrooms.stream().forEach((mushroom) -> {
+            mushroom.active = true;
+        });
+        snows.stream().forEach((snow) -> {
+            snow.active = true;
+        });
+        dinosaurs.stream().forEach((Dinosaur dinosaur) -> {
+            dinosaur.active = true;
+        });
     }
 
     public Stage getStage() {
         return this.gameStage;
+    }
+
+    public void setMonsterInfo(MonsterInfoPkg pkg) {
+        for (int i = 0; i < pkg.baronInfos.size(); ++i) {
+            barons.get(i).setInfo(pkg.baronInfos.get(i));
+        }
+
+        for (int i = 0; i < pkg.mushroomInfos.size(); ++i) {
+            mushrooms.get(i).setInfo(pkg.mushroomInfos.get(i));
+        }
+
+        for (int i = 0; i < pkg.snowInfos.size(); ++i) {
+            snows.get(i).setInfo(pkg.snowInfos.get(i));
+        }
+
+        for (int i = 0; i < pkg.dinosaurInfos.size(); ++i) {
+            dinosaurs.get(i).setInfo(pkg.dinosaurInfos.get(i));
+        }
     }
 }

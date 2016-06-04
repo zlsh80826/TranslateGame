@@ -5,27 +5,28 @@
  */
 package serialize;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author zlsh80826
  */
-public class MonsterInfoPkg {
+public class MonsterInfoPkg extends SerialItem implements Serializable{
 
     public ArrayList<MushroomInfo> mushroomInfos;
     public ArrayList<BaronInfo> baronInfos;
     public ArrayList<SnowInfo> snowInfos;
     public ArrayList<DinosaurInfo> dinosaurInfos;
 
-    MonsterInfoPkg() {
+    public MonsterInfoPkg() {
         mushroomInfos = new ArrayList<MushroomInfo>();
         baronInfos = new ArrayList<BaronInfo>();
         snowInfos = new ArrayList<SnowInfo>();
         dinosaurInfos = new ArrayList<DinosaurInfo>();
     }
     
-    public void addMushroomInfos(MushroomInfo mushroomInfo){
+    public void addMushroomInfo(MushroomInfo mushroomInfo){
         mushroomInfos.add(mushroomInfo);
     }
     

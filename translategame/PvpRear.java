@@ -62,17 +62,20 @@ public class PvpRear extends Thread {
 
     public void recv() {
         try {
-            Object obj = in.readObject();
+             SerialItem obj = (SerialItem)in.readObject();
             //System.out.println("Recv obj...");
             if (obj instanceof Situation) {
                 this.parseSituation((Situation) obj);
-            } else if(obj instanceof Info){
-                this.front.enemy.setInfo((Info)obj);
-            }else {
+            } else if (obj instanceof Info) {
+                this.front.enemy.setInfo( (Info) obj );
+            } else if (obj instanceof MonsterInfoPkg) {
+                this.front.setMonsterInfo( (MonsterInfoPkg) obj );
+            } else {
                 System.out.println("Client recv unrecognize packet");
             }
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(WaitRoomRear.class.getName()).log(Level.SEVERE, null, ex);
+            //System.out.println("QQ");
         }
     }
 
@@ -101,8 +104,8 @@ public class PvpRear extends Thread {
             System.out.println("send complete status error");
         }
     }
-    
-    public void sendInfo(Info info){
+
+    public void sendInfo(Info info) {
         try {
             out.writeObject(info);
         } catch (IOException ex) {

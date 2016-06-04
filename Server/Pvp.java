@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import serialize.*;
@@ -32,6 +33,8 @@ public class Pvp extends Thread {
     boolean selectComplete = false;
     boolean pASelectComplete = false;
     boolean pBSelectComplete = false;
+    boolean startGame = false;
+    MonsterInfoPkg monsterInfoPkg;
     //Career pACareer;
     //Career pBCareer;
     Info pAInfo;
@@ -73,6 +76,10 @@ public class Pvp extends Thread {
         PvpListen pBHandler = new PvpListen(this, pBIn, 1);
         pBHandler.start();
         pAHandler.start();
+
+        monsterInfoPkg = new MonsterInfoPkg();
+        initPkg();
+
         while (true) {
             if (this.getLoadComplete()) {
                 sendStartSelect();
@@ -82,7 +89,24 @@ public class Pvp extends Thread {
                 sendStartGame();
                 this.setSelectComplete(false);
             }
+            if (startGame) {
+                try {
+                    Thread.sleep(100);
+                    sendMonsterInfo();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             //System.out.println(selectComplete);
+        }
+    }
+
+    public void sendMonsterInfo() {
+        try {
+            pAOut.writeObject(monsterInfoPkg);
+            pBOut.writeObject(monsterInfoPkg);
+        } catch (IOException ex) {
+            Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -98,23 +122,22 @@ public class Pvp extends Thread {
     public void sendStartGame() {
         System.out.println("Send start game");
         try {
-            //pAOut.writeObject(new Situation("startgame", pACareer));
-            //pBOut.writeObject(new Situation("startgame", pBCareer));
             pAOut.writeObject(new Situation("startgame", pBInfo));
             pBOut.writeObject(new Situation("startgame", pAInfo));
         } catch (IOException ex) {
             System.out.println("send start select sitution error");
         }
+        startGame = true;
     }
-    
-    public void sendInfoToPeer(int identify, Info info){
-        if(identify == 0){
+
+    public void sendInfoToPeer(int identify, Info info) {
+        if (identify == 0) {
             try {
                 pBOut.writeObject(info);
             } catch (IOException ex) {
                 Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else if(identify == 1){
+        } else if (identify == 1) {
             try {
                 pAOut.writeObject(info);
             } catch (IOException ex) {
@@ -163,5 +186,26 @@ public class Pvp extends Thread {
 
     public synchronized boolean getLoadComplete() {
         return this.loadComplete;
+    }
+
+    void initPkg() {
+        Random random = new Random();
+        for (int i = 0; i < 10; ++i) {
+            monsterInfoPkg.addMushroomInfo(new MushroomInfo(random.nextInt(1350) + 20, 590f, false, 0, 50));
+        }
+
+        monsterInfoPkg.addBaronInfo(new BaronInfo(0f, 800f, false, 0, 8000));
+
+        for (int i = 0; i < 3; ++i) {
+            monsterInfoPkg.addSnowInfo(new SnowInfo(random.nextInt(630) + 480, 320f, false, 0, 400));
+        }
+
+        for (int i = 0; i < 2; ++i) {
+            monsterInfoPkg.addDinosaurInfo(new DinosaurInfo(random.nextInt(200) + 100, 170f, false, 0, 1000));
+        }
+
+        for (int i = 0; i < 2; ++i) {
+            monsterInfoPkg.addDinosaurInfo(new DinosaurInfo(random.nextInt(200) + 1150, 170f, false, 0, 1000));
+        }
     }
 }

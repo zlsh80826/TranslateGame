@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @author zlsh80826
  */
-public class Situation implements Serializable {
+public class Situation extends SerialItem implements Serializable {
 
     String status;
     Career career;

@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @author zlsh80826
  */
-public class Info implements Serializable{
+public class Info extends SerialItem implements Serializable{
     public int action;
     public float x;
     public float y;

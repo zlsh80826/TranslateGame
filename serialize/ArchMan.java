@@ -114,6 +114,6 @@ public class ArchMan extends Character implements Serializable {
 
     @Override
     public Info getInfo() {
-        return new Info(action, x, y, reverse, Career.SwordMan);
+        return new Info(action, x, y, reverse, Career.Archer);
     }
 }

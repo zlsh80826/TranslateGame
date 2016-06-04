@@ -5,10 +5,17 @@
  */
 package serialize;
 
+import java.io.Serializable;
+
 /**
  *
  * @author zlsh80826
  */
-public class MushroomInfo extends MonsterInfo {
-    
+public class MushroomInfo extends MonsterInfo implements Serializable {
+
+    public MushroomInfo(float x, float y, boolean reverse, int action, int curHp) {
+        super(x, y, reverse, action, curHp);
+    }
+
+
 }

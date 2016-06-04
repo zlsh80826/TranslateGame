@@ -13,18 +13,16 @@ import java.io.Serializable;
  */
 public class MonsterInfo implements Serializable{
     public int curHp;
-    public int maxHp;
     public int action;
-    public int reverse;
+    public boolean reverse;
     public float x;
     public float y;
     
-    public MonsterInfo(float x, float y, int reverse, int action, int curHp, int maxHp){
+    public MonsterInfo(float x, float y, boolean reverse, int action, int curHp){
         this.x = x;
         this.y = y;
         this.reverse = reverse;
         this.action = action;
-        this.curHp = curHp;
-        this.maxHp = maxHp;        
+        this.curHp = curHp;       
     }
 }
