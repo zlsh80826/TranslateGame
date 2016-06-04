@@ -6,6 +6,7 @@
 package serialize;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
@@ -26,6 +27,7 @@ public class StoryMap implements Serializable {
     PImage[] images;
     PImage bg;
     PApplet parent;
+    ArrayList<Obstacle> obstacles;
 
     public StoryMap(PApplet parent, float x, float y) {
         this.parent = parent;
@@ -45,6 +47,12 @@ public class StoryMap implements Serializable {
             images[i] = image;
         }
         bg = parent.loadImage("material/map/bkg_lg.png");
+
+        obstacles = new ArrayList<Obstacle>();
+        obstacles.add(new Obstacle(this.parent, 0f, 590f, 1500f, 50f, this));
+        obstacles.add(new Obstacle(this.parent, 0f, 170f, 380f, 50f, this));
+        obstacles.add(new Obstacle(this.parent, 1140f, 170f, 360f, 50f, this));
+        obstacles.add(new Obstacle(this.parent, 470f, 320f, 590f, 50f, this));
     }
 
     public void display() {
@@ -54,11 +62,16 @@ public class StoryMap implements Serializable {
         }
         parent.image(bg, x - 5, y + offsetY);
         parent.image(images[frame], x, y);
+        
+        obstacles.stream().forEach((obstacle) -> {
+            obstacle.display();
+        });
     }
 
     public void setX(float newX) {
-        if(newX < -366 || newX > 0)
+        if (newX < -366 || newX > 0) {
             return;
+        }
         this.x = newX;
     }
 

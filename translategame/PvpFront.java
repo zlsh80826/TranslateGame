@@ -43,7 +43,6 @@ public class PvpFront extends PApplet {
     serialize.Character enemy;
     ArrayList<Door> doors;
     ArrayList<RevivePoint> revPt;
-    ArrayList<Obstacle> obstacles;
 
     PvpFront(TranslateGame parent, PvpRear rear) {
         this.parent = parent;
@@ -67,12 +66,6 @@ public class PvpFront extends PApplet {
         revPt = new ArrayList<RevivePoint>();
         revPt.add(new RevivePoint(this, 180, 595, map));
         revPt.add(new RevivePoint(this, 1500, 595, map));
-        
-        obstacles = new ArrayList<Obstacle>();
-        obstacles.add(new Obstacle(this, 0f, 700f, 1500f, 50f, map));
-        obstacles.add(new Obstacle(this, 0f, 200f, 400f, 50f, map));
-        obstacles.add(new Obstacle(this, 1300f, 1500f, 400f, 50f, map));
-        obstacles.add(new Obstacle(this, 500f, 500f, 600f, 50f, map));
 
         // character
         magicMan = new MagicMan(this, magicManSelectX, SelectY, map);
@@ -123,6 +116,7 @@ public class PvpFront extends PApplet {
             revPt.stream().forEach((revpt) -> {
                 revpt.display();
             });
+            
         }
     }
 

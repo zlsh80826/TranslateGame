@@ -12,15 +12,15 @@ import processing.core.PApplet;
  * @author zlsh80826
  */
 public class Obstacle {
-    
+
     float x;
     float y;
     float width;
     float height;
     StoryMap map;
     PApplet parent;
-    
-    public Obstacle(PApplet parent, float x, float y, float width, float height, StoryMap map){
+
+    public Obstacle(PApplet parent, float x, float y, float width, float height, StoryMap map) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -28,8 +28,15 @@ public class Obstacle {
         this.map = map;
         this.parent = parent;
     }
+
+    public void display() {
+        parent.noFill();
+        parent.stroke(200, 153, 126, 250);
+        parent.strokeWeight(3);
+        parent.rect(x + map.getX(), y + map.getY(), width, height);
+    }
     
-    public void display(){
-        parent.rect( x+map.getX(), y+map.getY(), width, height);
+    public float getGround(){
+        return this.x;
     }
 }
