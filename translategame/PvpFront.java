@@ -6,6 +6,7 @@
 package translategame;
 
 import de.looksgood.ani.Ani;
+import java.util.ArrayList;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
@@ -28,16 +29,21 @@ public class PvpFront extends PApplet {
     ArchMan archer;
     SwordMan swordMan;
     PImage selectBg;
-    float swordManSelectX = 290f;
+    float swordManSelectX = 240f;
     float SelectY = 640f;
-    float magicManSelectX = 590f;
-    float archManSelectX = 890f;
+    float magicManSelectX = 540f;
+    float archManSelectX = 840f;
     float radius = 100f;
     float selectModifyX = -35f;
     float selectModifyY = -50f;
+    float bgOffsetX;
+    float bgOffsetY;
     Career career;
     serialize.Character hero;
     serialize.Character enemy;
+    ArrayList<Door> doors;
+    ArrayList<RevivePoint> revPt;
+    ArrayList<Obstacle> obstacles;
 
     PvpFront(TranslateGame parent, PvpRear rear) {
         this.parent = parent;
@@ -46,17 +52,42 @@ public class PvpFront extends PApplet {
     }
 
     public void initial() {
-        baron = new Baron(this, 800f, 300f);
-        map = new StoryMap(this, 0f, 0f);
-        magicMan = new MagicMan(this, magicManSelectX, SelectY);
-        magicMan.setReverse();
-        archer = new ArchMan(this, archManSelectX, SelectY);
-        archer.setReverse();
-        swordMan = new SwordMan(this, swordManSelectX, SelectY);
-        swordMan.setReverse();
+        // create object
+
+        // map
+        this.bgOffsetX = 0f;
+        this.bgOffsetY = 0f;
+        map = new StoryMap(this, bgOffsetX, bgOffsetY);
         selectBg = loadImage("material/map/selectBG.png");
-        rear.sendLoadComplete();
+
+        doors = new ArrayList<Door>();
+        doors.add(new Door(this, 400, 590, map));
+        doors.add(new Door(this, 1220, 590, map));
+
+        revPt = new ArrayList<RevivePoint>();
+        revPt.add(new RevivePoint(this, 180, 595, map));
+        revPt.add(new RevivePoint(this, 1500, 595, map));
+        
+        obstacles = new ArrayList<Obstacle>();
+        obstacles.add(new Obstacle(this, 0f, 700f, 1500f, 50f, map));
+        obstacles.add(new Obstacle(this, 0f, 200f, 400f, 50f, map));
+        obstacles.add(new Obstacle(this, 1300f, 1500f, 400f, 50f, map));
+        obstacles.add(new Obstacle(this, 500f, 500f, 600f, 50f, map));
+
+        // character
+        magicMan = new MagicMan(this, magicManSelectX, SelectY, map);
+        magicMan.setReverse();
+        archer = new ArchMan(this, archManSelectX, SelectY, map);
+        archer.setReverse();
+        swordMan = new SwordMan(this, swordManSelectX, SelectY, map);
+        swordMan.setReverse();
         career = Career.UNCHOOSE;
+
+        // monster
+        baron = new Baron(this, 800f, 300f);
+
+        // complete protocaol
+        rear.sendLoadComplete();
         gameStage = Stage.SELECT;
     }
 
@@ -82,46 +113,50 @@ public class PvpFront extends PApplet {
             this.swordMan.display();
         } else if (gameStage == Stage.START) {
             map.display();
-            if (mouseX < 20) {
-                map.setX(map.getX() + 5);
-            } else if (mouseX > 1114) {
-                map.setX(map.getX() - 5);
-            }
-
-            if (mouseY < 20) {
-                map.setY(map.getY() + 5);
-            } else if (mouseY > 600) {
-                map.setY(map.getY() - 5);
-            }
             this.hero.display();
             this.enemy.display();
-        }
 
-        //this.character.display();
-        //this.mushroom.display();
-        //this.baron.display();
+            doors.stream().forEach((door) -> {
+                door.display();
+            });
+
+            revPt.stream().forEach((revpt) -> {
+                revpt.display();
+            });
+        }
     }
 
     @Override
     public void keyPressed() {
-        /*if(key == 's'){
-            this.baron.setStand();
+        if (gameStage == Stage.START) {
+            if (key == 's') {
+                this.hero.setStand();
+            }
+            if (key == 'c') {
+                this.hero.setClimb();
+            }
+            if (key == 'm') {
+                this.hero.setMove();
+            }
+            if (key == 'h') {
+                this.hero.setHit();
+            }
+            if (key == 'r') {
+                this.hero.setReverse();
+            }
+            if (key == 'a') {
+                this.hero.setAttack();
+            }
+            if (keyCode == LEFT) {
+                this.hero.setLeft(map);
+                this.hero.setMove();
+            }
+            if (keyCode == RIGHT) {
+                this.hero.setRight(map);
+                this.hero.setMove();
+            }
+            this.rear.sendInfo(this.hero.getInfo());
         }
-        if(key == 'd'){
-            this.baron.setDie();
-        }
-        if(key == 'm'){
-            this.baron.setMove();
-        }
-        if(key == 'h'){
-            this.baron.setHit();
-        }
-        if(key == 'r'){
-            this.baron.setReverse();
-        }
-        if(key == 'a'){
-            this.baron.setAttack();
-        }*/
     }
 
     @Override
@@ -159,15 +194,18 @@ public class PvpFront extends PApplet {
             frameRate(60);
             if (dist(this.swordManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
                 this.career = Career.SwordMan;
-                this.rear.sendSelectComplete(career);
+                //this.rear.sendSelectComplete(career);
+                this.rear.sendSelectComplete(this.swordMan.getInfo());
                 hero = this.swordMan;
             } else if (dist(this.magicManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
                 this.career = Career.MagicMan;
-                this.rear.sendSelectComplete(career);
+                //this.rear.sendSelectComplete(career);
+                this.rear.sendSelectComplete(this.magicMan.getInfo());
                 hero = this.magicMan;
             } else if (dist(this.archManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
                 this.career = Career.Archer;
-                this.rear.sendSelectComplete(career);
+                //this.rear.sendSelectComplete(career);
+                this.rear.sendSelectComplete(this.archer.getInfo());
                 hero = this.archer;
             } else {
                 this.career = Career.UNCHOOSE;
@@ -175,14 +213,18 @@ public class PvpFront extends PApplet {
         }
     }
 
-    public void startGame(Career career) {
+    public void startGame(Info info) {
         System.out.println("StartGame");
-        if(career == Career.SwordMan)
+        if (info.career == Career.SwordMan) {
             enemy = this.swordMan;
-        else if(career == Career.MagicMan)
+        } else if (info.career == Career.MagicMan) {
             enemy = this.magicMan;
-        else if(career == Career.Archer)
+        } else if (info.career == Career.Archer) {
             enemy = this.archer;
+        }
+        enemy.setInfo(info);
+        enemy.hideIntroduction();
+        hero.hideIntroduction();
         this.gameStage = Stage.START;
     }
 

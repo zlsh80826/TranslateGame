@@ -5,7 +5,6 @@
  */
 package serialize;
 
-import java.io.Serializable;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
@@ -14,7 +13,7 @@ import processing.core.PImage;
  *
  * @author zlsh80826
  */
-public class StoryMap implements Serializable {
+public class RevivePoint {
 
     float x;
     float y;
@@ -24,18 +23,19 @@ public class StoryMap implements Serializable {
     int offsetX;
     int offsetY;
     PImage[] images;
-    PImage bg;
     PApplet parent;
+    StoryMap map;
 
-    public StoryMap(PApplet parent, float x, float y) {
+    public RevivePoint(PApplet parent, float x, float y, StoryMap map) {
         this.parent = parent;
         this.x = x;
         this.y = y;
         this.offsetY = -200;
-        this.imageCount = 20;
+        this.imageCount = 8;
         this.controlSeed = 0;
+        this.map = map;
 
-        String imagePrefix = "material/map/MapleMap_image";
+        String imagePrefix = "material/map/revive";
         String imageSuffix = ".png";
 
         this.images = new PImage[imageCount];
@@ -44,7 +44,6 @@ public class StoryMap implements Serializable {
             PImage image = parent.loadImage(file_name);
             images[i] = image;
         }
-        bg = parent.loadImage("material/map/bkg_lg.png");
     }
 
     public void display() {
@@ -52,25 +51,6 @@ public class StoryMap implements Serializable {
         if (controlSeed == 0) {
             frame = (frame + 1) % (imageCount);
         }
-        parent.image(bg, x - 5, y + offsetY);
-        parent.image(images[frame], x, y);
-    }
-
-    public void setX(float newX) {
-        if(newX < -366 || newX > 0)
-            return;
-        this.x = newX;
-    }
-
-    public void setY(float newY) {
-        this.y = newY;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
+        parent.image(images[frame], x-images[frame].width + map.getX(), y-images[frame].height + map.getY());
+    }     
 }

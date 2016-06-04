@@ -15,6 +15,8 @@ public class Situation implements Serializable {
 
     String status;
     Career career;
+    serialize.Character character;
+    Info info;
 
     public Situation(String str) {
         this.status = str;
@@ -24,6 +26,20 @@ public class Situation implements Serializable {
         this.status = str;
         this.career = career;
     }
+    
+    public Situation(String str, Character character){
+        this.status = str;
+        this.character = character;
+    }
+    
+    public Situation(String str, Info info){
+        this.status = str;
+        this.info = info;
+    }
+    
+    public Info getInfo(){
+        return this.info;
+    }
 
     public String getStatus() {
         return status;
@@ -31,5 +47,9 @@ public class Situation implements Serializable {
 
     public Career getCareer() {
         return career;
+    }
+    
+    public Character getChar(){
+        return character;
     }
 }

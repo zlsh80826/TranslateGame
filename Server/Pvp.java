@@ -32,8 +32,10 @@ public class Pvp extends Thread {
     boolean selectComplete = false;
     boolean pASelectComplete = false;
     boolean pBSelectComplete = false;
-    Career pACareer;
-    Career pBCareer;
+    //Career pACareer;
+    //Career pBCareer;
+    Info pAInfo;
+    Info pBInfo;
 
     public Pvp(Listener monitor, Socket pA, Socket pB) {
         this.pA = pA;
@@ -80,7 +82,7 @@ public class Pvp extends Thread {
                 sendStartGame();
                 this.setSelectComplete(false);
             }
-            System.out.println(selectComplete);
+            //System.out.println(selectComplete);
         }
     }
 
@@ -96,10 +98,28 @@ public class Pvp extends Thread {
     public void sendStartGame() {
         System.out.println("Send start game");
         try {
-            pAOut.writeObject(new Situation("startgame", pACareer));
-            pBOut.writeObject(new Situation("startgame", pBCareer));
+            //pAOut.writeObject(new Situation("startgame", pACareer));
+            //pBOut.writeObject(new Situation("startgame", pBCareer));
+            pAOut.writeObject(new Situation("startgame", pBInfo));
+            pBOut.writeObject(new Situation("startgame", pAInfo));
         } catch (IOException ex) {
             System.out.println("send start select sitution error");
+        }
+    }
+    
+    public void sendInfoToPeer(int identify, Info info){
+        if(identify == 0){
+            try {
+                pBOut.writeObject(info);
+            } catch (IOException ex) {
+                Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else if(identify == 1){
+            try {
+                pAOut.writeObject(info);
+            } catch (IOException ex) {
+                Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -114,13 +134,15 @@ public class Pvp extends Thread {
         }
     }
 
-    public synchronized void setSelectComplete(int id, Career career) {
+    public synchronized void setSelectComplete(int id, Info info) {
         if (id == 0) {
             pASelectComplete = true;
-            pBCareer = career;
+            //pBCareer = career;
+            pAInfo = info;
         } else if (id == 1) {
             pBSelectComplete = true;
-            pACareer = career;
+            //pACareer = career;
+            pBInfo = info;
         }
         if (pASelectComplete && pBSelectComplete) {
             setSelectComplete(true);

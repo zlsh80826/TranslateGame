@@ -7,6 +7,8 @@ package Server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import serialize.*;
 
 /**
@@ -38,9 +40,12 @@ public class PvpListen extends Thread {
             System.out.println("Recv Obj...");
             if (pkg instanceof Situation) {
                 parseSituation((Situation) pkg);
+            } else if(pkg instanceof Info){
+                parent.sendInfoToPeer(identify, (Info)pkg);
             }
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println("recv packet error");
+            Logger.getLogger(PvpListen.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -49,8 +54,9 @@ public class PvpListen extends Thread {
         if ("loadcomplete".equals(pkg.getStatus())) {
             parent.setLoadComplete(identify);
         } else if ("selectcomplete".equals(pkg.getStatus())) {
-            System.out.println( identify + " " + pkg.getCareer() );
-            parent.setSelectComplete(identify, pkg.getCareer());
+            //System.out.println( identify + " " + pkg.getCareer() );
+            //parent.setSelectComplete(identify, pkg.getCareer());
+            parent.setSelectComplete(identify, pkg.getInfo());
         }
     }
 }

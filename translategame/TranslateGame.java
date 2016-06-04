@@ -51,7 +51,6 @@ public class TranslateGame {
         RoomType type = (RoomType) out.readObject();
         if (type instanceof WaitRoomType) {
             createWaitRoom(socket);
-            System.out.println("debug");
             createPvpRoom(socket);
         } else if (type instanceof PvpRoomType) {
             createPvpRoom(socket);
