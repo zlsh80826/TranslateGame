@@ -13,4 +13,8 @@ import java.io.Serializable;
  */
 public class SnowInfo extends MonsterInfo implements Serializable {
     
+    public SnowInfo(float x, float y, int reverse, int action, int curHp, int maxHp) {
+        super(x, y, reverse, action, curHp, maxHp);
+    }
+    
 }

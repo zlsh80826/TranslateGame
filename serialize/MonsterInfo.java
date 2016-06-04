@@ -12,10 +12,19 @@ import java.io.Serializable;
  * @author zlsh80826
  */
 public class MonsterInfo implements Serializable{
-    int curHp;
-    int maxHp;
-    int action;
-    int reverse;
-    float x;
-    float y;
+    public int curHp;
+    public int maxHp;
+    public int action;
+    public int reverse;
+    public float x;
+    public float y;
+    
+    public MonsterInfo(float x, float y, int reverse, int action, int curHp, int maxHp){
+        this.x = x;
+        this.y = y;
+        this.reverse = reverse;
+        this.action = action;
+        this.curHp = curHp;
+        this.maxHp = maxHp;        
+    }
 }
