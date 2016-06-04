@@ -36,7 +36,11 @@ public class Obstacle {
         parent.rect(x + map.getX(), y + map.getY(), width, height);
     }
     
-    public float getGround(){
-        return this.x;
+    public boolean onGround(Character ch){
+        if((ch.x >= x) && (ch.x <= x+width) && (ch.y >= y) && (ch.y <= y+height)){
+            ch.setPos(ch.x, this.y);
+            return true;
+        }
+        return false;
     }
 }

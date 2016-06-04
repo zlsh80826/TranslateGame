@@ -86,4 +86,9 @@ public class StoryMap implements Serializable {
     public float getY() {
         return y;
     }
+    
+    public boolean checkOnGround(Character ch){
+        return obstacles.stream().anyMatch((obstacle) -> (obstacle.onGround(ch)));
+    }
+
 }

@@ -6,12 +6,13 @@
 package serialize;
 
 import de.looksgood.ani.Ani;
-import de.looksgood.ani.AniConstants;
+import de.looksgood.ani.AniSequence;
 import java.io.Serializable;
 import java.util.ArrayList;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
+import translategame.PvpFront;
 
 /**
  *
@@ -19,7 +20,7 @@ import processing.core.PImage;
  */
 public class SwordMan extends Character implements Serializable {
 
-    PApplet parent;
+    PvpFront parent;
     ArrayList<ArrayList<PImage>> images;
     ArrayList<Integer> imageCount;
     ArrayList<String> fileName;
@@ -30,13 +31,14 @@ public class SwordMan extends Character implements Serializable {
     boolean reverse;
     boolean revealIntroducion;
     StoryMap map;
+    int speed;
     // stand 
     // move
     // hit
     // attack
     // climb
 
-    public SwordMan(PApplet parent, float x, float y, StoryMap map) {
+    public SwordMan(PvpFront parent, float x, float y, StoryMap map) {
         this.frame = new ArrayList<Integer>();
         for (int i = 0; i < 10; ++i) {
             frame.add(0);
@@ -91,20 +93,37 @@ public class SwordMan extends Character implements Serializable {
                 offset.add(0);
             }
         }
-        
+
         this.count = 0;
         this.action = 0;
+        this.speed = 0;
         this.map = map;
+        this.jumping = false;
+        this.isDroping = false;
+        this.setGravity();
+        this.aniseq = new AniSequence(parent);
     }
 
     @Override
     public void display() {
-        if ( (reverse == true && action != 6) || (action == 6 && reverse == false) ) {
+        System.out.println(aniseq.getStepCount());
+        parent.ellipse(x, y, 10, 10);
+        if ((reverse == true && action != 6) || (action == 6 && reverse == false)) {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
                     this.x - getWidth() + offset.get(this.getAction()) + map.getX(),
                     this.y - getHeight() + map.getY());
         } else {
-            parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x + map.getX(), this.y - getHeight()+ map.getY());
+            parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x + map.getX(), this.y - getHeight() + map.getY());
+        }
+        if (this.parent.getStage() == Stage.START) {
+            if (map.checkOnGround(this)) {
+                isDroping = false;
+                this.setMove();
+            } else {
+                Ani.to(this, 0.015f, "y", y + 27, Ani.EXPO_IN);
+                isDroping = true;
+                this.setHit();
+            }
         }
         if (++count % 12 == 0) {
             count = 0;
@@ -190,31 +209,40 @@ public class SwordMan extends Character implements Serializable {
     @Override
     public void setLeft(StoryMap map) {
         reverse = false;
-        if( x < 20 )
+        if (x < 20) {
             return;
-        Ani.to(this, 0.015f, "x", x-15, Ani.LINEAR);
-        if(x <= 500 && map.getX()<0){
+        }
+        Ani.to(this, 0.015f, "x", x - 15, Ani.LINEAR);
+        if (x <= 500 && map.getX() < 0) {
             map.setX(map.getX() + 20);
         }
     }
 
     @Override
-    public  synchronized void setRight(StoryMap map) {
+    public synchronized void setRight(StoryMap map) {
         reverse = true;
-        if( x > 1400 ){
+        if (x > 1400) {
             return;
         }
-        Ani.to(this, 0.015f, "x", x+15, Ani.LINEAR);
-        if(x > 1000 && x<1440 ){
-            map.setX(map.getX()-20);
+        Ani.to(this, 0.015f, "x", x + 15, Ani.LINEAR);
+        if (x > 1000 && x < 1440) {
+            map.setX(map.getX() - 20);
         }
     }
-    
-    public int getWidth(){
+
+    public int getWidth() {
         return images.get(this.getAction()).get(frame.get(this.getAction())).width;
     }
-    
-    public int getHeight(){
+
+    public int getHeight() {
         return images.get(this.getAction()).get(frame.get(this.getAction())).height;
     }
+
+    @Override
+    public void jump() {
+        this.jumping = true;
+        //this.aniseq.add(Ani.to(this, 0.3f, "y", y - 50, Ani.QUINT_IN));
+        this.y = 0;
+    }
+
 }

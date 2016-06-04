@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
+import translategame.PvpFront;
 
 /**
  *
@@ -18,7 +19,7 @@ import processing.core.PImage;
  */
 public class ArchMan extends Character implements Serializable {
 
-    PApplet parent;
+    PvpFront parent;
     ArrayList<ArrayList<PImage>> images;
     ArrayList<Integer> imageCount;
     ArrayList<String> fileName;
@@ -35,7 +36,7 @@ public class ArchMan extends Character implements Serializable {
     // attack
     // climb
 
-    public ArchMan(PApplet parent, float x, float y, StoryMap map) {
+    public ArchMan(PvpFront parent, float x, float y, StoryMap map) {
         this.frame = new ArrayList<Integer>();
         for (int i = 0; i < 10; ++i) {
             frame.add(0);
@@ -81,7 +82,7 @@ public class ArchMan extends Character implements Serializable {
             }
             images.add(temp);
         }
-        
+
         this.offset = new ArrayList<Integer>();
         for (int i = 0; i < 10; ++i) {
             if (i % 2 == 1) {
@@ -90,7 +91,7 @@ public class ArchMan extends Character implements Serializable {
                 offset.add(0);
             }
         }
-        
+
         this.count = 0;
         this.action = 0;
         this.map = map;
@@ -104,6 +105,13 @@ public class ArchMan extends Character implements Serializable {
                     this.y - getHeight() + map.getY());
         } else {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x + map.getX(), this.y - getHeight() + map.getY());
+        }
+        if (this.parent.getStage() == Stage.START) {
+            if (map.checkOnGround(this)) {
+
+            } else {
+                Ani.to(this, 0.015f, "y", y + 10, Ani.EXPO_IN);
+            }
         }
         if (++count % 12 == 0) {
             count = 0;
@@ -216,5 +224,12 @@ public class ArchMan extends Character implements Serializable {
 
     public int getHeight() {
         return images.get(this.getAction()).get(frame.get(this.getAction())).height;
+    }
+
+    @Override
+    public void jump() {
+        this.jumping = true;
+        Ani ani = Ani.to(this, 0.2f, "y", y - 50, Ani.QUINT_OUT);
+
     }
 }

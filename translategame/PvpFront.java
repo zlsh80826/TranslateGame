@@ -116,7 +116,7 @@ public class PvpFront extends PApplet {
             revPt.stream().forEach((revpt) -> {
                 revpt.display();
             });
-            
+
         }
     }
 
@@ -125,29 +125,24 @@ public class PvpFront extends PApplet {
         if (gameStage == Stage.START) {
             if (key == 's') {
                 this.hero.setStand();
-            }
-            if (key == 'c') {
+            } else if (key == 'c') {
                 this.hero.setClimb();
-            }
-            if (key == 'm') {
+            } else if (key == 'm') {
                 this.hero.setMove();
-            }
-            if (key == 'h') {
+            } else if (key == 'h') {
                 this.hero.setHit();
-            }
-            if (key == 'r') {
+            } else if (key == 'r') {
                 this.hero.setReverse();
-            }
-            if (key == 'a') {
+            } else if (key == 'a') {
                 this.hero.setAttack();
-            }
-            if (keyCode == LEFT) {
+            } else if (keyCode == LEFT && this.hero.isDroping == false) {
                 this.hero.setLeft(map);
                 this.hero.setMove();
-            }
-            if (keyCode == RIGHT) {
+            } else if (keyCode == RIGHT && this.hero.isDroping == false) {
                 this.hero.setRight(map);
                 this.hero.setMove();
+            } else if( keyCode == ALT){
+                this.hero.jump();
             }
             this.rear.sendInfo(this.hero.getInfo());
         }
@@ -155,13 +150,14 @@ public class PvpFront extends PApplet {
 
     @Override
     public void keyReleased() {
-
+        if (gameStage == Stage.START) {
+            this.hero.setStand();
+        }
     }
 
     @Override
     public void mouseMoved() {
         if (gameStage == Stage.SELECT && (career == Career.UNCHOOSE)) {
-            frameRate(60);
             if (dist(this.swordManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
                 this.swordMan.setAttack();
                 this.swordMan.introduction();
@@ -185,7 +181,6 @@ public class PvpFront extends PApplet {
     @Override
     public void mouseClicked() {
         if (gameStage == Stage.SELECT && (career == Career.UNCHOOSE)) {
-            frameRate(60);
             if (dist(this.swordManSelectX + this.selectModifyX, this.SelectY + this.selectModifyY, mouseX, mouseY) <= radius) {
                 this.career = Career.SwordMan;
                 //this.rear.sendSelectComplete(career);
@@ -219,7 +214,14 @@ public class PvpFront extends PApplet {
         enemy.setInfo(info);
         enemy.hideIntroduction();
         hero.hideIntroduction();
+        hero.setStand();
+        hero.setPos(hero.x, 0);
+        this.rear.sendInfo(this.hero.getInfo());
         this.gameStage = Stage.START;
+        this.frameRate(60);
     }
 
+    public Stage getStage() {
+        return this.gameStage;
+    }
 }
