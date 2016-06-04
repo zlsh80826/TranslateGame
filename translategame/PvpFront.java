@@ -108,7 +108,7 @@ public class PvpFront extends PApplet {
             map.display();
             this.hero.display();
             this.enemy.display();
-
+            this.rear.sendInfo(this.hero.getInfo());
             doors.stream().forEach((door) -> {
                 door.display();
             });
@@ -144,7 +144,6 @@ public class PvpFront extends PApplet {
             } else if( keyCode == ALT){
                 this.hero.jump();
             }
-            this.rear.sendInfo(this.hero.getInfo());
         }
     }
 
@@ -203,7 +202,6 @@ public class PvpFront extends PApplet {
     }
 
     public void startGame(Info info) {
-        System.out.println("StartGame");
         if (info.career == Career.SwordMan) {
             enemy = this.swordMan;
         } else if (info.career == Career.MagicMan) {
@@ -212,7 +210,7 @@ public class PvpFront extends PApplet {
             enemy = this.archer;
         }
         enemy.setInfo(info);
-        enemy.hideIntroduction();
+        //enemy.hideIntroduction();
         hero.hideIntroduction();
         hero.setStand();
         hero.setPos(hero.x, 0);
