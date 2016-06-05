@@ -24,11 +24,17 @@ public class PvpRear extends Thread {
     PvpFront front;
     ObjectOutputStream out;
     ObjectInputStream in;
+    ObjectOutputStream monsterOut;
+    ObjectInputStream monsterIn;
     boolean isRunning;
+    HandleMonster monsterHandler;
+    
+    Socket monsterSocket;
 
-    PvpRear(TranslateGame parent, Socket socket) {
+    PvpRear(TranslateGame parent, Socket socket, Socket monsterSocket) {
         this.parent = parent;
         this.socket = socket;
+        this.monsterSocket = monsterSocket;
         this.isRunning = true;
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -53,6 +59,7 @@ public class PvpRear extends Thread {
 
     public void setFront(PvpFront front) {
         this.front = front;
+        this.monsterHandler = new HandleMonster(front, monsterSocket);
     }
 
     public void end() {
@@ -68,8 +75,6 @@ public class PvpRear extends Thread {
                 this.parseSituation((Situation) obj);
             } else if (obj instanceof Info) {
                 this.front.enemy.setInfo( (Info) obj );
-            } else if (obj instanceof MonsterInfoPkg) {
-                this.front.setMonsterInfo( (MonsterInfoPkg) obj );
             } else {
                 System.out.println("Client recv unrecognize packet");
             }
@@ -84,6 +89,7 @@ public class PvpRear extends Thread {
         if ("startgame".equals(status.getStatus())) {
             //System.out.println(status.getCareer());
             //front.startGame(status.getCareer());
+            monsterHandler.start();
             front.startGame(status.getInfo());
         }
     }

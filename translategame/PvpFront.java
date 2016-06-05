@@ -6,6 +6,7 @@
 package translategame;
 
 import de.looksgood.ani.Ani;
+import java.io.IOException;
 import java.util.ArrayList;
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -283,7 +284,7 @@ public class PvpFront extends PApplet {
         return this.gameStage;
     }
 
-    public void setMonsterInfo(MonsterInfoPkg pkg) {
+    public void setMonsterInfo(serialize.MonsterInfoPkg pkg) throws IOException{
         for (int i = 0; i < pkg.baronInfos.size(); ++i) {
             barons.get(i).setInfo(pkg.baronInfos.get(i));
         }

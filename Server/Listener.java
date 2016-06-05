@@ -12,20 +12,24 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import serialize.*;
+
 /**
  *
  * @author zlsh80826
  */
-public class Listener implements Runnable{
+public class Listener implements Runnable {
+
     Monitor monitor;
     ServerSocket listenSocket;
     int playerWaitCounter;
     int port;
     Socket player1;
     Socket player2;
+    Socket player1MonsterSocket;
+    Socket player2MonsterSocket;
     WaitRoom waitroom;
-    
-    Listener(Monitor monitor){
+
+    Listener(Monitor monitor) {
         this.monitor = monitor;
         this.playerWaitCounter = 0;
         this.port = 8888;
@@ -39,12 +43,17 @@ public class Listener implements Runnable{
 
     @Override
     public void run() {
-        while(true){
-            if(playerWaitCounter == 0){
+        while (true) {
+            if (playerWaitCounter == 0) {
                 try {
+                    
                     player1 = listenSocket.accept();
-                    String address = player1.getInetAddress().toString();               
+                    String address = player1.getInetAddress().toString();                    
                     monitor.addText("\nConnection from " + address.substring(1) + " : " + player1.getPort());
+                    
+                    player1MonsterSocket = listenSocket.accept();
+                    String addressMonster = player1MonsterSocket.getInetAddress().toString();
+                    monitor.addText("\nConnection from " + addressMonster.substring(1) + " : " + player1MonsterSocket.getPort());
                     ObjectOutputStream out = new ObjectOutputStream(player1.getOutputStream());
                     out.writeObject(new WaitRoomType());
                     waitroom = new WaitRoom(this, player1);
@@ -52,25 +61,30 @@ public class Listener implements Runnable{
                 } catch (IOException ex) {
                     System.out.println("waitroom exists error");
                 }
-                playerWaitCounter ++;
-            }else if(playerWaitCounter == 1){
+                playerWaitCounter++;
+            } else if (playerWaitCounter == 1) {
                 try {
+                    
                     player2 = listenSocket.accept();
-                    String address= player2.getInetAddress().toString();
+                    String address = player2.getInetAddress().toString();                    
                     monitor.addText("\nConnection from " + address.substring(1) + " : " + player2.getPort());
+                    
+                    player2MonsterSocket = listenSocket.accept();
+                    String addressMonster = player2MonsterSocket.getInetAddress().toString();
+                    monitor.addText("\nConnection from " + addressMonster.substring(1) + " : " + player2MonsterSocket.getPort());
                     waitroom.end();
                     ObjectOutputStream out = new ObjectOutputStream(player2.getOutputStream());
                     out.writeObject(new PvpRoomType());
                     waitroom.join();
-                    Pvp pvp = new Pvp(this, player1, player2);
+                    Pvp pvp = new Pvp(this, player1, player2, player1MonsterSocket, player2MonsterSocket);
                     pvp.start();
                 } catch (IOException ex) {
                     System.out.println("PVP exists error");
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Listener.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                playerWaitCounter = 0;                
+                playerWaitCounter = 0;
             }
-        }        
+        }
     }
 }

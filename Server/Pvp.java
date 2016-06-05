@@ -22,6 +22,8 @@ public class Pvp extends Thread {
 
     Socket pA;
     Socket pB;
+    Socket monsterSocketA;
+    Socket monsterSocketB;
     ObjectInputStream pAIn;
     ObjectInputStream pBIn;
     ObjectOutputStream pAOut;
@@ -35,15 +37,18 @@ public class Pvp extends Thread {
     boolean pBSelectComplete = false;
     boolean startGame = false;
     MonsterInfoPkg monsterInfoPkg;
+    ServerMonsterControl control;
     //Career pACareer;
     //Career pBCareer;
     Info pAInfo;
     Info pBInfo;
 
-    public Pvp(Listener monitor, Socket pA, Socket pB) {
+    public Pvp(Listener monitor, Socket pA, Socket pB, Socket monsterSocketA, Socket monsterSocketB) {
         this.pA = pA;
         this.pB = pB;
         this.monitor = monitor;
+        this.monsterSocketA = monsterSocketA;
+        this.monsterSocketB = monsterSocketB;
         try {
             pAIn = new ObjectInputStream(pA.getInputStream());
         } catch (IOException ex) {
@@ -67,7 +72,8 @@ public class Pvp extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
+        control = new ServerMonsterControl(this.monsterSocketA, this.monsterSocketB);
     }
 
     @Override
@@ -76,9 +82,6 @@ public class Pvp extends Thread {
         PvpListen pBHandler = new PvpListen(this, pBIn, 1);
         pBHandler.start();
         pAHandler.start();
-
-        monsterInfoPkg = new MonsterInfoPkg();
-        initPkg();
 
         while (true) {
             if (this.getLoadComplete()) {
@@ -89,31 +92,20 @@ public class Pvp extends Thread {
                 sendStartGame();
                 this.setSelectComplete(false);
             }
-            if (startGame) {
-                try {
-                    Thread.sleep(100);
-                    sendMonsterInfo();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            if (this.getStartGame()) {
+                control.start();
+                this.setStartGame(false);
             }
             //System.out.println(selectComplete);
-        }
-    }
-
-    public void sendMonsterInfo() {
-        try {
-            pAOut.writeObject(monsterInfoPkg);
-            pBOut.writeObject(monsterInfoPkg);
-        } catch (IOException ex) {
-            Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void sendStartSelect() {
         try {
             pAOut.writeObject(new Situation("startselect"));
+            pAOut.flush();
             pBOut.writeObject(new Situation("startselect"));
+            pBOut.flush();
         } catch (IOException ex) {
             System.out.println("send start select sitution error");
         }
@@ -123,17 +115,20 @@ public class Pvp extends Thread {
         System.out.println("Send start game");
         try {
             pAOut.writeObject(new Situation("startgame", pBInfo));
+            pAOut.flush();
             pBOut.writeObject(new Situation("startgame", pAInfo));
+            pBOut.flush();
         } catch (IOException ex) {
             System.out.println("send start select sitution error");
         }
-        startGame = true;
+        this.setStartGame(true);
     }
 
     public void sendInfoToPeer(int identify, Info info) {
         if (identify == 0) {
             try {
                 pBOut.writeObject(info);
+                pBOut.flush();
             } catch (IOException ex) {
                 Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -176,6 +171,10 @@ public class Pvp extends Thread {
         this.selectComplete = value;
     }
 
+    public synchronized void setStartGame(boolean value) {
+        this.startGame = value;
+    }
+
     public synchronized void setLoadComplete(boolean value) {
         this.loadComplete = value;
     }
@@ -188,24 +187,8 @@ public class Pvp extends Thread {
         return this.loadComplete;
     }
 
-    void initPkg() {
-        Random random = new Random();
-        for (int i = 0; i < 10; ++i) {
-            monsterInfoPkg.addMushroomInfo(new MushroomInfo(random.nextInt(1350) + 20, 590f, false, 0, 50));
-        }
-
-        monsterInfoPkg.addBaronInfo(new BaronInfo(0f, 800f, false, 0, 8000));
-
-        for (int i = 0; i < 3; ++i) {
-            monsterInfoPkg.addSnowInfo(new SnowInfo(random.nextInt(630) + 480, 320f, false, 0, 400));
-        }
-
-        for (int i = 0; i < 2; ++i) {
-            monsterInfoPkg.addDinosaurInfo(new DinosaurInfo(random.nextInt(200) + 100, 170f, false, 0, 1000));
-        }
-
-        for (int i = 0; i < 2; ++i) {
-            monsterInfoPkg.addDinosaurInfo(new DinosaurInfo(random.nextInt(200) + 1150, 170f, false, 0, 1000));
-        }
+    public synchronized boolean getStartGame() {
+        return this.startGame;
     }
+
 }

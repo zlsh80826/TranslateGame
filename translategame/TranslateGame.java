@@ -7,6 +7,7 @@ package translategame;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +22,8 @@ public class TranslateGame {
 
     JFrame frame;
     LoginPaint loginFrame;
+    String serverAddress;
+    int serverPort;
     //Socket socket;
 
     //test variable
@@ -36,6 +39,8 @@ public class TranslateGame {
         frame.setIconImage(image);        
          */
         frame.setLocation(550, 100);//need to tune      
+        serverAddress = "127.0.0.1";
+        serverPort = 8888;
     }
 
     public void start() {
@@ -46,18 +51,20 @@ public class TranslateGame {
     }
 
     public void connect(String account, String password) throws IOException, ClassNotFoundException {
-        Socket socket = new Socket("127.0.0.1", 8888);
+        Socket socket = new Socket(serverAddress, serverPort);
+        Socket monsterSocket = new Socket(serverAddress, serverPort);
         ObjectInputStream out = new ObjectInputStream(socket.getInputStream());
+        
         RoomType type = (RoomType) out.readObject();
         if (type instanceof WaitRoomType) {
-            createWaitRoom(socket);
-            createPvpRoom(socket);
+            createWaitRoom(socket, monsterSocket);
+            createPvpRoom(socket, monsterSocket);
         } else if (type instanceof PvpRoomType) {
-            createPvpRoom(socket);
+            createPvpRoom(socket, monsterSocket);
         }
     }
 
-    public void createWaitRoom(Socket socket) {
+    public void createWaitRoom(Socket socket, Socket monsterSocket) {
         WaitRoomRear waitRear = new WaitRoomRear(this, socket);
         WaitRoomFront waitFront = new WaitRoomFront(this, waitRear);
         waitRear.setFront(waitFront);
@@ -72,8 +79,8 @@ public class TranslateGame {
         }
     }
 
-    public void createPvpRoom(Socket socket) {
-        PvpRear pvpRear = new PvpRear(this, socket);
+    public void createPvpRoom(Socket socket, Socket monsterSocket) {
+        PvpRear pvpRear = new PvpRear(this, socket, monsterSocket);
         PvpFront pvpFront = new PvpFront(this, pvpRear);
         pvpRear.setFront(pvpFront);
         frame.setContentPane(pvpFront);
