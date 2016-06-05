@@ -34,7 +34,6 @@ public class MonsterListener extends Thread {
     public synchronized void recv(){
         try {
             MonsterInfoPkg pkg = (MonsterInfoPkg)in.readObject();
-            System.out.println(pkg.mushroomInfos.get(0).x);
             parent.setPkg(pkg);
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(MonsterListener.class.getName()).log(Level.SEVERE, null, ex);

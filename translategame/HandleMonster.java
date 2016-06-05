@@ -61,10 +61,8 @@ public class HandleMonster extends Thread {
     
     public synchronized void sendInfo(MonsterInfoPkg pkg){
         try {
-            System.out.println(pkg.mushroomInfos.get(0).x);
             out.writeObject(new MonsterInfoPkg(pkg) );
             out.reset();
-            System.out.println("send...");
         } catch (IOException ex) {
             Logger.getLogger(HandleMonster.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -141,22 +141,23 @@ public class Mushroom extends Monster implements Serializable {
         this.action = info.action;
         this.rest = info.rest;
     }
-    
+
     public synchronized void random() {
         if (this.curHp == this.maxHp && this.action == 0 && rest) {
             this.action = 2;
             this.reverse = random.nextBoolean();
             this.rest = false;
             MonsterTimer mt = new MonsterTimer(this, Action.MOVE);
-            int time = random.nextInt(3000) + 1000;
-            //System.out.println(time);
-            timer.schedule(mt, time);
+            //int time = random.nextInt(3000) + 1000;
+            //System.out.println(time);            
             int dis = random.nextInt(200);
-            if(reverse && this.x + dis < 1400){
-                Ani.to(this, time/1000f, "x", x+dis, Ani.LINEAR);
-            }else if(!reverse && this.x - dis > 0){
-                Ani.to(this, time/1000f, "x", this.x - dis, Ani.LINEAR);
+            int time = dis * 20;
+            if (reverse && this.x + dis < 1400) {
+                Ani.to(this, time / 1000f, "x", x + dis, Ani.LINEAR);
+            } else if (!reverse && this.x - dis > 0) {
+                Ani.to(this, time / 1000f, "x", this.x - dis, Ani.LINEAR);
             }
+            timer.schedule(mt, time);
         } else if (this.curHp == this.maxHp && this.action == 0 && !rest) {
             MonsterTimer mt = new MonsterTimer(this, Action.STAND);
             timer.schedule(mt, 1000 + random.nextInt(3000));

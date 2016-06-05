@@ -326,7 +326,6 @@ public class PvpFront extends PApplet {
 
     public synchronized void setMonsterInfo(serialize.MonsterInfoPkg pkg) throws IOException {
         if (!control) {
-            System.out.println("setting...");
             for (int i = 0; i < pkg.baronInfos.size(); ++i) {
                 barons.get(i).setInfo(pkg.baronInfos.get(i));
             }
