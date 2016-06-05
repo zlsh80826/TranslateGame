@@ -123,8 +123,12 @@ public class Baron extends Monster implements Serializable {
         float heroCenterPointY = ch.y + ch.height/2;
         
         if(PApplet.dist(thisCenterPointX, thisCenterPointY, heroCenterPointX, heroCenterPointY) < (this.width + ch.width)/2 ){
-            if( ch.getHit() == false )
-                ch.setHit(random.nextInt(50) + 50 );
+            if (ch.getHit() == false) {
+                if( thisCenterPointX > heroCenterPointX )
+                    ch.setHit(random.nextInt(50) + 50, true);
+                else
+                    ch.setHit(random.nextInt(50) + 50, false);
+            }
         }
     }
 

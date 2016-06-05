@@ -48,6 +48,8 @@ public abstract class Character {
     public int width;
     public int height;
     public Timer timer;
+    public int dmg;
+    public float attackRange;
     AniSequence aniseq;
 
     int[] expTable = {15, 34, 57, 92, 135, 372, 560, 840, 1242, 1490, 2145, 3088, 4446, 6402};
@@ -95,7 +97,7 @@ public abstract class Character {
         if (revealIntroducion) {
             parent.text("SwordMan", 574, 200);
         }
-        
+
         if (parent.getStage() == Stage.START) {
             float green = 80 * curHp / MaxHp;
             float red = 80 - green;
@@ -122,6 +124,18 @@ public abstract class Character {
 
             parent.fill(255, 0, 0);
             parent.ellipse(this.x + map.getX() + width / 2, this.y + map.getY() - height / 2, 50, 50);
+
+            if (reverse) {
+                parent.noFill();
+                parent.strokeWeight(3);
+                parent.stroke(0, 255, 0);
+                parent.rect(this.x + map.getX() + width, this.y + map.getY() - height, attackRange, height);
+            } else {
+                parent.noFill();
+                parent.strokeWeight(3);
+                parent.stroke(0, 255, 0);
+                parent.rect(this.x + map.getX() - attackRange, this.y + map.getY() - height, attackRange, height);
+            }
         }
     }
 
@@ -173,16 +187,6 @@ public abstract class Character {
         }
     }
 
-    /*public void setStand() {
-        action = 0;
-    }
-
-    public void setMove() {
-        action = 2;
-    }*/
- /*public void setAttack() {
-        action = 6;
-    }*/
     public void setAttacking(boolean attacking) {
         this.attacking = attacking;
     }
@@ -308,7 +312,7 @@ public abstract class Character {
         return this.invincible;
     }
 
-    public synchronized void setHit(int damage) {
+    public synchronized void setHit(int damage, boolean dir) {
         if (this.getInvincible()) {
             return;
         }
@@ -316,10 +320,15 @@ public abstract class Character {
         this.setInvincible(true);
         this.setAction(Action.HIT);
         this.curHp -= damage;
+        if (dir) {
+            Ani.to(this, 0.3f, "x", x - 20);
+        } else {
+            Ani.to(this, 0.3f, "x", x + 20);
+        }
         SettingTimer st = new SettingTimer(this, Action.HIT, false);
         ActionTimer at = new ActionTimer(this, Action.HIT);
-        timer.schedule(st, 500);
-        timer.schedule(at, 2500);
+        timer.schedule(st, 300);
+        timer.schedule(at, 1500);
     }
 
     public boolean isMoving() {
@@ -345,5 +354,9 @@ public abstract class Character {
 
     public synchronized void setDroping(boolean value) {
         this.droping = value;
+    }
+
+    public synchronized boolean getAttacking() {
+        return this.attacking;
     }
 }

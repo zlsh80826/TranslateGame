@@ -49,7 +49,7 @@ public class StoryMap implements Serializable {
         bg = parent.loadImage("material/map/bkg_lg.png");
 
         obstacles = new ArrayList<Obstacle>();
-        obstacles.add(new Obstacle(this.parent, 0f, 590f, 1500f, 50f, this));
+        obstacles.add(new Obstacle(this.parent, -100f, 590f, 1700f, 50f, this));
         obstacles.add(new Obstacle(this.parent, 0f, 170f, 380f, 50f, this));
         obstacles.add(new Obstacle(this.parent, 1100f, 170f, 400f, 50f, this));
         obstacles.add(new Obstacle(this.parent, 430f, 320f, 630f, 50f, this));

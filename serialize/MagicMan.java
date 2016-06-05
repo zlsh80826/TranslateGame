@@ -85,6 +85,8 @@ public class MagicMan extends Character implements Serializable {
         this.width = images.get(0).get(0).width;
         this.height = images.get(0).get(0).height;
         this.aniseq = new AniSequence(this.parent);
+        this.dmg = (int)(20 * Math.pow(1.9, LV));
+        this.attackRange = 200;
     }
 
     @Override

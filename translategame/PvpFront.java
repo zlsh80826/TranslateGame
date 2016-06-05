@@ -53,7 +53,6 @@ public class PvpFront extends PApplet {
     MonsterInfoPkg monsterInfoPkg;
     HandleMonster HM;
     Random random = new Random();
-    
 
     PvpFront(TranslateGame parent, PvpRear rear, boolean control) {
         this.parent = parent;
@@ -157,9 +156,8 @@ public class PvpFront extends PApplet {
                 mushroom.display();
                 if (control) {
                     mushroom.random();
-                }
-                if(control)
                     monsterInfoPkg.mushroomInfos.get(i).setInfo(mushroom);
+                }
             }
 
             for (Mushroom mushroom : mushrooms) {
@@ -168,22 +166,38 @@ public class PvpFront extends PApplet {
                 }
             }
 
-            snows.stream().forEach((snow) -> {
-                snow.display();
-            });
-
-            for (Snow snow : snows) {
-                if (snow.isCollision(hero)) {
+            for (Mushroom mushroom : mushrooms) {
+                if (mushroom.isAttacked(hero)) {
                     break;
                 }
             }
 
-            dinosaurs.stream().forEach((Dinosaur dinosaur) -> {
+            for (int i = 0; i < 3; ++i) {
+                Snow snow = snows.get(i);
+                snow.display();
+                if (control) {
+                    snow.random();
+                    monsterInfoPkg.snowInfos.get(i).setInfo(snow);
+                }
+            }
+
+            for (Snow snow : snows) {
+                if (snow.isAttacked(hero)) {
+                    break;
+                }
+            }
+
+            for (int i = 0; i < 4; ++i) {
+                Dinosaur dinosaur = dinosaurs.get(i);
                 dinosaur.display();
-            });
+                if (control) {
+                    dinosaur.random();
+                    monsterInfoPkg.dinosaurInfos.get(i).setInfo(dinosaur);
+                }
+            }
 
             for (Dinosaur dinosaur : dinosaurs) {
-                if (dinosaur.isCollision(hero)) {
+                if (dinosaur.isAttacked(hero)) {
                     break;
                 }
             }
@@ -207,7 +221,7 @@ public class PvpFront extends PApplet {
             } else if (key == 'm') {
                 this.hero.curMp -= 50;
             } else if (key == 'h') {
-                this.hero.setHit(0);
+                //this.hero.setHit(0, true);
                 this.hero.curMp += 50;
             } else if (key == 'r') {
                 this.hero.curHp += 50;
@@ -341,8 +355,9 @@ public class PvpFront extends PApplet {
             for (int i = 0; i < pkg.dinosaurInfos.size(); ++i) {
                 dinosaurs.get(i).setInfo(pkg.dinosaurInfos.get(i));
             }
-            if(!this.MIPKGINIT)
+            if (!this.MIPKGINIT) {
                 this.MIPKGINIT = true;
+            }
         }
     }
 
@@ -359,15 +374,15 @@ public class PvpFront extends PApplet {
         monsterInfoPkg.addBaronInfo(new BaronInfo(0f, 800f, false, 0, 8000));
 
         for (int i = 0; i < 3; ++i) {
-            monsterInfoPkg.addSnowInfo(new SnowInfo(random.nextInt(630) + 480, 320f, false, 8, 400));
+            monsterInfoPkg.addSnowInfo(new SnowInfo(random.nextInt(550) + 400, 320f, false, 0, 400));
         }
 
         for (int i = 0; i < 2; ++i) {
-            monsterInfoPkg.addDinosaurInfo(new DinosaurInfo(random.nextInt(200) + 100, 170f, false, 8, 1000));
+            monsterInfoPkg.addDinosaurInfo(new DinosaurInfo(random.nextInt(300) + 1, 170f, false, 0, 1000));
         }
 
         for (int i = 0; i < 2; ++i) {
-            monsterInfoPkg.addDinosaurInfo(new DinosaurInfo(random.nextInt(200) + 1150, 170f, false, 6, 1000));
+            monsterInfoPkg.addDinosaurInfo(new DinosaurInfo(random.nextInt(300) + 1100, 170f, false, 0, 1000));
         }
 
         for (int i = 0; i < monsterInfoPkg.baronInfos.size(); ++i) {

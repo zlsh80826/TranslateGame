@@ -80,10 +80,12 @@ public class SwordMan extends Character implements Serializable {
         this.MaxHp = (int)(1000 * Math.pow(1.1, LV));
         this.curHp = MaxHp;
         this.MaxMp = (int)(200 * Math.pow(1.1, LV));
+        this.dmg = (int)(30 * Math.pow(1.7, LV));
         this.curMp = MaxMp;
         this.width = images.get(0).get(0).width;
         this.height = images.get(0).get(0).height;
         this.aniseq = new AniSequence(this.parent);
+        this.attackRange = 100;
     }
 
     @Override

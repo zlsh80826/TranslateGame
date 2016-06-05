@@ -81,10 +81,12 @@ public class ArchMan extends Character implements Serializable {
         this.MaxHp = (int) (800 * Math.pow(1.1, LV));
         this.curHp = MaxHp;
         this.MaxMp = (int) (300 * Math.pow(1.1, LV));
+        this.dmg = (int)(25 * Math.pow(1.7, LV));
         this.curMp = MaxMp;
         this.width = images.get(0).get(0).width;
         this.height = images.get(0).get(0).height;
         this.aniseq = new AniSequence(this.parent);
+        this.attackRange = 300;
     }
 
     @Override

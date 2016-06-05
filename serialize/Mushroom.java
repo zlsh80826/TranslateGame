@@ -74,7 +74,7 @@ public class Mushroom extends Monster implements Serializable {
         this.rest = true;
     }
 
-    public void display() {
+    public void display() {        
         if (active) {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
                     this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width + map.getX() + images.get(0).get(0).width,
@@ -93,13 +93,14 @@ public class Mushroom extends Monster implements Serializable {
         parent.fill(77, 255, 77);
         parent.rect(this.x - 5 + map.getX(), this.y - 70, green, 8);
         parent.fill(255, 77, 77);
-        parent.rect(this.x - images.get(0).get(0).width - 5 + green + map.getX(), this.y - 70, red, 8);
+        parent.rect(this.x - 5 + green + map.getX(), this.y - 70, red, 8);
 
         // collision detect
         parent.noFill();
         parent.strokeWeight(3);
         parent.stroke(0);
         parent.rect(this.x + map.getX(), this.y + map.getY() - height, width, height);
+        parent.text(Integer.toString(curHp), this.x + map.getX(), this.y + map.getY() - height - 20);
     }
 
     public void setStand() {
@@ -125,13 +126,18 @@ public class Mushroom extends Monster implements Serializable {
         float heroCenterPointY = ch.y + ch.height / 2;
 
         if (PApplet.dist(thisCenterPointX, thisCenterPointY, heroCenterPointX, heroCenterPointY) < (this.width + ch.width) / 2) {
-            if (ch.getHit() == false) {
-                ch.setHit(random.nextInt(7) + 3);
+            if (ch.getInvincible() == false) {
+                if( thisCenterPointX > heroCenterPointX )
+                    ch.setHit(random.nextInt(7) + 3, true);
+                else
+                    ch.setHit(random.nextInt(7) + 3, false);
             }
             return true;
         }
         return false;
     }
+    
+    
 
     public void setInfo(MonsterInfo info) {
         this.x = info.x;
@@ -143,14 +149,14 @@ public class Mushroom extends Monster implements Serializable {
     }
 
     public synchronized void random() {
-        if (this.curHp == this.maxHp && this.action == 0 && rest) {
+        if (this.curHp <= this.maxHp && this.action == 0 && rest) {
             this.action = 2;
             this.reverse = random.nextBoolean();
             this.rest = false;
             MonsterTimer mt = new MonsterTimer(this, Action.MOVE);
             //int time = random.nextInt(3000) + 1000;
             //System.out.println(time);            
-            int dis = random.nextInt(200);
+            int dis = random.nextInt(200) + 1;
             int time = dis * 20;
             if (reverse && this.x + dis < 1400) {
                 Ani.to(this, time / 1000f, "x", x + dis, Ani.LINEAR);
@@ -158,7 +164,7 @@ public class Mushroom extends Monster implements Serializable {
                 Ani.to(this, time / 1000f, "x", this.x - dis, Ani.LINEAR);
             }
             timer.schedule(mt, time);
-        } else if (this.curHp == this.maxHp && this.action == 0 && !rest) {
+        } else if ( this.action == 0 && !rest) {
             MonsterTimer mt = new MonsterTimer(this, Action.STAND);
             timer.schedule(mt, 1000 + random.nextInt(3000));
         }

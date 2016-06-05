@@ -33,17 +33,15 @@ public abstract class Monster {
     public boolean hitting;
     public boolean dying;
     public boolean rest;
-    public int curHp;
+    protected int curHp;
     public int maxHp;
     StoryMap map;
     Timer timer = new Timer();
-    
+
     public float width;
     public float height;
     public int damage;
     Random random = new Random();
-
-
 
     public void setReverse() {
         reverse = !reverse;
@@ -63,6 +61,33 @@ public abstract class Monster {
     public void setPos(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void hit(int dmg) {
+        if (curHp < dmg) {
+            curHp = 0;
+        } else {
+            curHp -= dmg;
+        }
+    }
+
+    public synchronized boolean isAttacked(Character ch) {
+        if(!ch.getAttacking())
+            return true;
+        float thisCenterPointX = this.x + this.width / 2;
+        float thisCenterPointY = this.y + this.height / 2;
+        float heroCenterPointX = ch.x + ch.width / 2;
+        float heroCenterPointY = ch.y + ch.height / 2;
+        
+        if( (reverse && (thisCenterPointX > heroCenterPointX)) || (!reverse && (thisCenterPointX < heroCenterPointX) ) ){
+            System.out.println(thisCenterPointX + " " + heroCenterPointX);
+            if ( (Math.abs(thisCenterPointX - heroCenterPointX) < (this.width + ch.width) / 2 + ch.attackRange) &&
+                  Math.abs(thisCenterPointY - heroCenterPointY) < 50 ) {
+                this.hit(ch.dmg + random.nextInt(ch.dmg));
+                return true;
+            }
+        }
+        return false;
     }
 
 }

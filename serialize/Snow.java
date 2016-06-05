@@ -5,6 +5,7 @@
  */
 package serialize;
 
+import de.looksgood.ani.Ani;
 import java.io.Serializable;
 import java.util.ArrayList;
 import processing.core.PApplet;
@@ -132,7 +133,10 @@ public class Snow extends Monster implements Serializable {
 
         if (PApplet.dist(thisCenterPointX, thisCenterPointY, heroCenterPointX, heroCenterPointY) < (this.width + ch.width) / 2) {
             if (ch.getHit() == false) {
-                ch.setHit(random.nextInt(50) + 50);
+                if( thisCenterPointX > heroCenterPointX )
+                    ch.setHit(random.nextInt(50) + 50, true);
+                else
+                    ch.setHit(random.nextInt(50) + 50, false);
             }
             return true;
         }
@@ -144,7 +148,29 @@ public class Snow extends Monster implements Serializable {
         this.y = info.y;
         this.curHp = info.curHp;
         this.reverse = info.reverse;
-        this.action = info.action; 
+        this.action = info.action;
+    }
+
+    public synchronized void random() {
+        if (this.curHp == this.maxHp && this.action == 0 && rest) {
+            this.action = 2;
+            this.reverse = random.nextBoolean();
+            this.rest = false;
+            MonsterTimer mt = new MonsterTimer(this, Action.MOVE);
+            //int time = random.nextInt(3000) + 1000;
+            //System.out.println(time);            
+            int dis = random.nextInt(100) + 1;
+            int time = dis * 25;
+            if (reverse && this.x + dis < 950) {
+                Ani.to(this, time / 1000f, "x", x + dis, Ani.LINEAR);
+            } else if (!reverse && this.x - dis > 400) {
+                Ani.to(this, time / 1000f, "x", this.x - dis, Ani.LINEAR);
+            }
+            timer.schedule(mt, time);
+        } else if (this.curHp == this.maxHp && this.action == 0 && !rest) {
+            MonsterTimer mt = new MonsterTimer(this, Action.STAND);
+            timer.schedule(mt, 1000 + random.nextInt(3000));
+        }
     }
 
 }
