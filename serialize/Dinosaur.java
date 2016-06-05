@@ -97,11 +97,11 @@ public class Dinosaur extends Monster implements Serializable {
         parent.fill(255, 77, 77);
         parent.rect(this.x + 5 + green + map.getX(), this.y - 135, red, 8);
         
-        // collision
+        // collision detect
         parent.noFill();
         parent.strokeWeight(3);
         parent.stroke(0);
-        parent.rect(this.x, this.y - height, width, height);
+        parent.rect(this.x + map.getX(), this.y + map.getY() - height, width, height);
     }
 
     public void setStand() {
@@ -122,5 +122,18 @@ public class Dinosaur extends Monster implements Serializable {
 
     public void setAttack() {
         action = 8;
+    }
+    
+        
+    public void isCollision(Character ch){
+        float thisCenterPointX = this.x + this.width/2;
+        float thisCenterPointY = this.y + this.height/2;
+        float heroCenterPointX = ch.x + ch.width/2;
+        float heroCenterPointY = ch.y + ch.height/2;
+        
+        if(PApplet.dist(thisCenterPointX, thisCenterPointY, heroCenterPointX, heroCenterPointY) < (this.width + ch.width)/2 ){
+            if( ch.getHit() == false )
+                ch.setHit(random.nextInt(100) + 300 );
+        }
     }
 }

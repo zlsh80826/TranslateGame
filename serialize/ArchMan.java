@@ -77,10 +77,12 @@ public class ArchMan extends Character implements Serializable {
         this.curHp = MaxHp;
         this.MaxMp = (int)(300 * Math.pow(1.1, LV));
         this.curMp = MaxMp;
+        this.width = images.get(0).get(0).width;
+        this.height = images.get(0).get(0).height;
     }
 
     @Override
-    public void display() {
+    public void display() {        
         super.display();
         if (reverse == true) {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
@@ -97,7 +99,7 @@ public class ArchMan extends Character implements Serializable {
             } else {
                 Ani.to(this, 0.015f, "y", y + 27, Ani.EXPO_IN);
                 isDroping = true;
-                this.setHit();
+                this.setHit(0);
             }
         }
         

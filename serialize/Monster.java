@@ -6,6 +6,7 @@
 package serialize;
 
 import java.util.ArrayList;
+import java.util.Random;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -32,6 +33,9 @@ public abstract class Monster {
     
     public float width;
     public float height;
+    public int damage;
+    Random random = new Random();
+
 
 
     public void setReverse() {
@@ -60,9 +64,5 @@ public abstract class Monster {
         this.reverse = info.reverse;
         this.curHp = info.curHp;
         this.reverse = info.reverse;
-    }
-    
-    public void isCollision(){
-        
     }
 }

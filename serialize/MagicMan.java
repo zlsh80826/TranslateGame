@@ -77,6 +77,8 @@ public class MagicMan extends Character implements Serializable {
         this.curHp = MaxHp;
         this.MaxMp = (int)(600 * Math.pow(1.1, LV));
         this.curMp = MaxMp;
+        this.width = images.get(0).get(0).width;
+        this.height = images.get(0).get(0).height;
     }
 
     @Override
@@ -97,7 +99,7 @@ public class MagicMan extends Character implements Serializable {
             } else {
                 Ani.to(this, 0.015f, "y", y + 27, Ani.EXPO_IN);
                 isDroping = true;
-                this.setHit();
+                this.setHit(0);
             }
         }
         

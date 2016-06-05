@@ -7,6 +7,7 @@ package serialize;
 
 import de.looksgood.ani.Ani;
 import java.util.ArrayList;
+import java.util.Timer;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
 import translategame.PvpFront;
@@ -21,6 +22,7 @@ public abstract class Character {
     public float y;
     public boolean jumping;
     public boolean isDroping;
+    private boolean isHitting;
     PvpFront parent;
     ArrayList<ArrayList<PImage>> images;
     ArrayList<Integer> imageCount;
@@ -37,7 +39,10 @@ public abstract class Character {
     public int exp;
     public int MaxMp;
     public int curMp;
-    
+    public int width;
+    public int height;
+    public Timer timer;
+
     int[] expTable = {15, 34, 57, 92, 135, 372, 560, 840, 1242, 1490, 2145, 3088, 4446, 6402};
     StoryMap map;
 
@@ -49,13 +54,15 @@ public abstract class Character {
         this.reverse = false;
         this.jumping = false;
         this.isDroping = false;
+        this.isHitting = false;
 
         this.count = 0;
         this.action = 0;
+        this.timer = new Timer();
     }
 
     public void display() {
-        if(parent.getStage() == Stage.START){
+        if (parent.getStage() == Stage.START) {
             float green = 80 * curHp / MaxHp;
             float red = 80 - green;
             //parent.noStroke();
@@ -72,6 +79,15 @@ public abstract class Character {
             parent.rect(this.x + 10 + map.getX(), this.y - 100, blue, 8);
             parent.fill(10, 10, 10, 200);
             parent.rect(this.x + 10 + map.getX() + blue, this.y - 100, nblue, 8);
+
+            // collision detect
+            parent.noFill();
+            parent.strokeWeight(3);
+            parent.stroke(255, 0, 0);
+            parent.rect(this.x + map.getX(), this.y + map.getY() - height, width, height);
+            
+            parent.fill(255, 0 , 0);
+            parent.ellipse(this.x + map.getX() + width/2, this.y + map.getY() - height/2, 50, 50);
         }
     }
 
@@ -85,6 +101,9 @@ public abstract class Character {
         parent.text(lvStr, 900, 50);
         parent.text(hpStr, 900, 100);
         parent.text(mpStr, 900, 150);
+        
+        if(this.getHit() == true)
+            parent.text("Hit", 200, 300);
     }
 
     public void setPos(float newX, float newY) {
@@ -110,8 +129,12 @@ public abstract class Character {
         action = 2;
     }
 
-    public void setHit() {
+    public synchronized void setHit(int damage) {
+        this.setHit(true);
+        this.curHp -= damage;
         action = 4;
+        SettingTimer st = new SettingTimer(this, "setHit", false);
+        timer.schedule(st, 2000);
     }
 
     public void setAttack() {
@@ -187,5 +210,13 @@ public abstract class Character {
     public void jump() {
         this.jumping = true;
         this.y = 0;
+    }
+    
+    public synchronized void setHit(boolean value){
+        this.isHitting = value;
+    }
+    
+    public synchronized boolean getHit(){
+        return this.isHitting;
     }
 }

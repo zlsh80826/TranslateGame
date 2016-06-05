@@ -146,14 +146,17 @@ public class PvpFront extends PApplet {
             
             mushrooms.stream().forEach((mushroom) -> {
                 mushroom.display();
+                mushroom.isCollision(this.hero);
             });
             
             snows.stream().forEach((snow) -> {
                 snow.display();
+                snow.isCollision(this.hero);
             });
             
             dinosaurs.stream().forEach((Dinosaur dinosaur) -> {
                 dinosaur.display();
+                dinosaur.isCollision(this.hero);
             });
 
         }
@@ -170,7 +173,7 @@ public class PvpFront extends PApplet {
                 this.hero.setMove();
                 this.hero.curMp -= 50;
             } else if (key == 'h') {
-                this.hero.setHit();
+                this.hero.setHit(0);
                 this.hero.curMp += 50;
             } else if (key == 'r') {
                 this.hero.setReverse();
