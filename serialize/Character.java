@@ -37,6 +37,7 @@ public abstract class Character {
     public int exp;
     public int MaxMp;
     public int curMp;
+    
     int[] expTable = {15, 34, 57, 92, 135, 372, 560, 840, 1242, 1490, 2145, 3088, 4446, 6402};
     StoryMap map;
 
@@ -54,20 +55,24 @@ public abstract class Character {
     }
 
     public void display() {
-        float green = 80 * curHp / MaxHp;
-        float red = 80 - green;
-        parent.noStroke();
-        parent.fill(77, 255, 77);
-        parent.rect(this.x + 10 + map.getX(), this.y - 108, green, 8, 3);
-        parent.fill(255, 77, 77);
-        parent.rect(this.x + 10 + map.getX() + green, this.y - 108, red, 8, 3);
+        if(parent.getStage() == Stage.START){
+            float green = 80 * curHp / MaxHp;
+            float red = 80 - green;
+            //parent.noStroke();
+            parent.stroke(0);
+            parent.strokeWeight(2);
+            parent.fill(77, 255, 77);
+            parent.rect(this.x + 10 + map.getX(), this.y - 108, green, 8);
+            parent.fill(255, 77, 77);
+            parent.rect(this.x + 10 + map.getX() + green, this.y - 108, red, 8);
 
-        float blue = 80 * curMp / MaxMp;
-        float nblue = 80 - blue;
-        parent.fill(77, 77, 255);
-        parent.rect(this.x + 10 + map.getX(), this.y - 100, blue, 8, 3);
-        parent.fill(10, 10, 10, 200);
-        parent.rect(this.x + 10 + map.getX() + blue, this.y - 100, nblue, 8, 3);
+            float blue = 80 * curMp / MaxMp;
+            float nblue = 80 - blue;
+            parent.fill(77, 77, 255);
+            parent.rect(this.x + 10 + map.getX(), this.y - 100, blue, 8);
+            parent.fill(10, 10, 10, 200);
+            parent.rect(this.x + 10 + map.getX() + blue, this.y - 100, nblue, 8);
+        }
     }
 
     public void displayInfo() {
@@ -142,7 +147,7 @@ public abstract class Character {
 
     public abstract Info getInfo();
 
-    public void setInfo(Info info) {
+    public synchronized void setInfo(Info info) {
         this.action = info.action;
         this.x = info.x;
         this.y = info.y;
