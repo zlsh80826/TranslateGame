@@ -17,35 +17,55 @@ import serialize.MonsterInfoPkg;
  *
  * @author zlsh80826
  */
-public class HandleMonster extends Thread{
+public class HandleMonster extends Thread {
+
     PvpFront boss;
     Socket monsterSocket;
     ObjectInputStream in;
+    ObjectOutputStream out;
 
     HandleMonster(PvpFront front, Socket monsterSocket) {
         this.boss = front;
         this.monsterSocket = monsterSocket;
-        
+
         try {
             this.in = new ObjectInputStream(monsterSocket.getInputStream());
         } catch (IOException ex) {
             Logger.getLogger(HandleMonster.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        try {
+            this.out = new ObjectOutputStream(monsterSocket.getOutputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(HandleMonster.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
-    
     @Override
-    public void run(){
-        while(true){
+    public void run() {
+        this.boss.setHM(this);
+        while (true) {
             recv();
         }
     }
-    
-    public void recv(){
+
+    public void recv() {
         try {
-            MonsterInfoPkg pkg = (MonsterInfoPkg)in.readObject();
+            MonsterInfoPkg pkg = (MonsterInfoPkg) in.readObject();
             this.boss.setMonsterInfo(pkg);
         } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(HandleMonster.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public synchronized void sendInfo(MonsterInfoPkg pkg){
+        try {
+            System.out.println(pkg.mushroomInfos.get(0).x);
+            out.writeObject(new MonsterInfoPkg(pkg) );
+            out.reset();
+            System.out.println("send...");
+        } catch (IOException ex) {
             Logger.getLogger(HandleMonster.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

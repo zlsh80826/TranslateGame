@@ -6,6 +6,7 @@
 package serialize;
 
 import de.looksgood.ani.Ani;
+import de.looksgood.ani.AniSequence;
 import java.io.Serializable;
 import java.util.ArrayList;
 import static processing.core.PApplet.nf;
@@ -32,6 +33,8 @@ public class SwordMan extends Character implements Serializable {
         this.imageCount.add(3);
         this.imageCount.add(2);
         this.imageCount.add(2);
+        this.imageCount.add(1);
+        this.imageCount.add(1);
 
         this.parent = parent;
         this.x = x;
@@ -47,6 +50,8 @@ public class SwordMan extends Character implements Serializable {
         this.fileName.add("AttackR");
         this.fileName.add("Climb");
         this.fileName.add("ClimbR");
+        this.fileName.add("Jump");
+        this.fileName.add("JumpR");
 
         String imagePrefix = "material/character/Sword/Sword";
         String imageSuffix = ".png";
@@ -62,7 +67,7 @@ public class SwordMan extends Character implements Serializable {
         }
 
         this.offset = new ArrayList<Integer>();
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 12; ++i) {
             if (i % 2 == 1) {
                 offset.add(images.get(i).get(0).width);
             } else {
@@ -78,6 +83,7 @@ public class SwordMan extends Character implements Serializable {
         this.curMp = MaxMp;
         this.width = images.get(0).get(0).width;
         this.height = images.get(0).get(0).height;
+        this.aniseq = new AniSequence(this.parent);
     }
 
     @Override
@@ -90,32 +96,11 @@ public class SwordMan extends Character implements Serializable {
                     this.y - getHeight() + map.getY());
         } else {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x + map.getX(), this.y - getHeight() + map.getY());
-        }
-        if (this.parent.getStage() == Stage.START) {
-            if (map.checkOnGround(this)) {
-                isDroping = false;
-                this.setMove();
-            } else {
-                Ani.to(this, 0.015f, "y", y + 27, Ani.EXPO_IN);
-                isDroping = true;
-                this.setHit(0);
-            }
-        }
-        if (++count % 12 == 0) {
-            count = 0;
-            int temp = (frame.get(this.getAction()) + 1) % (imageCount.get(this.getAction()));
-            frame.set(this.getAction(), temp);
-        }
-
-        if (revealIntroducion) {
-            parent.text("SwordMan", 574, 200);
-        }
-        
-        
+        }        
     }
 
     @Override
     public Info getInfo() {
-        return new Info(action, x, y, reverse, Career.SwordMan);
+        return new Info(action, x, y, reverse, Career.SwordMan, this.curHp, this.LV, this.exp, this.curMp);
     }
 }

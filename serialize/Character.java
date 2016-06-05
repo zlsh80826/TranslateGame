@@ -6,6 +6,7 @@
 package serialize;
 
 import de.looksgood.ani.Ani;
+import de.looksgood.ani.AniSequence;
 import java.util.ArrayList;
 import java.util.Timer;
 import static processing.core.PApplet.nf;
@@ -21,8 +22,13 @@ public abstract class Character {
     public float x;
     public float y;
     public boolean jumping;
-    public boolean isDroping;
+    public boolean droping;
     private boolean isHitting;
+    private boolean invincible;
+    private boolean attacking;
+    private boolean moving;
+    public boolean dump;
+
     PvpFront parent;
     ArrayList<ArrayList<PImage>> images;
     ArrayList<Integer> imageCount;
@@ -42,19 +48,24 @@ public abstract class Character {
     public int width;
     public int height;
     public Timer timer;
+    AniSequence aniseq;
 
     int[] expTable = {15, 34, 57, 92, 135, 372, 560, 840, 1242, 1490, 2145, 3088, 4446, 6402};
     StoryMap map;
 
     public Character() {
         this.frame = new ArrayList<Integer>();
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 12; ++i) {
             frame.add(0);
         }
         this.reverse = false;
         this.jumping = false;
-        this.isDroping = false;
+        this.droping = false;
         this.isHitting = false;
+        this.attacking = false;
+        this.invincible = false;
+        this.moving = false;
+        this.dump = false;
 
         this.count = 0;
         this.action = 0;
@@ -62,6 +73,29 @@ public abstract class Character {
     }
 
     public void display() {
+        // gravity
+        if (this.parent.getStage() == Stage.START && this.dump == false) {
+            if (map.checkOnGround(this)) {
+                if (this.droping) {
+                    this.setAction(Action.HIT);
+                    this.setInvincible(false);
+                }
+                this.setDroping(false);
+            } else if (this.jumping == false) {
+                this.drop();
+            }
+        }
+
+        if (++count % 12 == 0) {
+            count = 0;
+            int temp = (frame.get(this.getAction()) + 1) % (imageCount.get(this.getAction()));
+            frame.set(this.getAction(), temp);
+        }
+
+        if (revealIntroducion) {
+            parent.text("SwordMan", 574, 200);
+        }
+        
         if (parent.getStage() == Stage.START) {
             float green = 80 * curHp / MaxHp;
             float red = 80 - green;
@@ -85,9 +119,9 @@ public abstract class Character {
             parent.strokeWeight(3);
             parent.stroke(255, 0, 0);
             parent.rect(this.x + map.getX(), this.y + map.getY() - height, width, height);
-            
-            parent.fill(255, 0 , 0);
-            parent.ellipse(this.x + map.getX() + width/2, this.y + map.getY() - height/2, 50, 50);
+
+            parent.fill(255, 0, 0);
+            parent.ellipse(this.x + map.getX() + width / 2, this.y + map.getY() - height / 2, 50, 50);
         }
     }
 
@@ -101,9 +135,11 @@ public abstract class Character {
         parent.text(lvStr, 900, 50);
         parent.text(hpStr, 900, 100);
         parent.text(mpStr, 900, 150);
-        
-        if(this.getHit() == true)
-            parent.text("Hit", 200, 300);
+
+    }
+
+    public void setJumping(boolean jumping) {
+        this.jumping = jumping;
     }
 
     public void setPos(float newX, float newY) {
@@ -121,24 +157,34 @@ public abstract class Character {
         this.y = newY;
     }
 
-    public void setStand() {
+    public void setAction(Action action) {
+        if (action == Action.ATTACK) {
+            this.action = 6;
+        } else if (action == Action.HIT) {
+            this.action = 4;
+        } else if (action == Action.MOVE) {
+            this.action = 2;
+        } else if (action == Action.ONRAP) {
+            this.action = 8;
+        } else if (action == Action.STAND) {
+            this.action = 0;
+        } else if (action == Action.JUMP) {
+            this.action = 10;
+        }
+    }
+
+    /*public void setStand() {
         action = 0;
     }
 
     public void setMove() {
         action = 2;
-    }
-
-    public synchronized void setHit(int damage) {
-        this.setHit(true);
-        this.curHp -= damage;
-        action = 4;
-        SettingTimer st = new SettingTimer(this, "setHit", false);
-        timer.schedule(st, 2000);
-    }
-
-    public void setAttack() {
+    }*/
+ /*public void setAttack() {
         action = 6;
+    }*/
+    public void setAttacking(boolean attacking) {
+        this.attacking = attacking;
     }
 
     public void setReverse() {
@@ -175,27 +221,41 @@ public abstract class Character {
         this.x = info.x;
         this.y = info.y;
         this.reverse = info.reverse;
+        this.curHp = info.curHp;
+        this.LV = info.LV;
+        this.exp = info.exp;
+        this.curMp = info.curMp;
     }
 
     public void setLeft(StoryMap map) {
-        reverse = false;
-        if (x < 20) {
-            return;
+        if (!attacking && !jumping && !isHitting && !droping) {
+            this.setAction(Action.MOVE);
         }
-        Ani.to(this, 0.015f, "x", x - 15, Ani.LINEAR);
-        if (x <= 500 && map.getX() < 0) {
-            map.setX(map.getX() + 20);
+        if (!isHitting) {
+            reverse = false;
+            if (x < 20) {
+                return;
+            }
+            Ani.to(this, 0.015f, "x", x - 15, Ani.LINEAR);
+            if (x <= 500 && map.getX() < 0) {
+                map.setX(map.getX() + 20);
+            }
         }
     }
 
     public synchronized void setRight(StoryMap map) {
-        reverse = true;
-        if (x > 1400) {
-            return;
+        if (!attacking && !jumping && !isHitting && !droping) {
+            this.setAction(Action.MOVE);
         }
-        Ani.to(this, 0.015f, "x", x + 15, Ani.LINEAR);
-        if (x > 1000 && x < 1440) {
-            map.setX(map.getX() - 25);
+        if (!isHitting) {
+            reverse = true;
+            if (x > 1400) {
+                return;
+            }
+            Ani.to(this, 0.015f, "x", x + 15, Ani.LINEAR);
+            if (x > 1000 && x < 1440) {
+                map.setX(map.getX() - 25);
+            }
         }
     }
 
@@ -208,15 +268,82 @@ public abstract class Character {
     }
 
     public void jump() {
-        this.jumping = true;
-        this.y = 0;
+        if (this.jumping || this.isHitting) {
+            return;
+        }
+        this.setJumping(true);
+        this.setAction(Action.JUMP);
+        Ani.to(this, 0.2f, "y", y - 50, Ani.SINE_OUT);
+        SettingTimer st = new SettingTimer(this, Action.JUMP, false);
+        ActionTimer at = new ActionTimer(this, Action.JUMP);
+        timer.schedule(st, 200);
+        timer.schedule(at, 400);
     }
-    
-    public synchronized void setHit(boolean value){
+
+    public synchronized void setHit(boolean value) {
         this.isHitting = value;
     }
-    
-    public synchronized boolean getHit(){
+
+    public synchronized boolean getHit() {
         return this.isHitting;
+    }
+
+    public synchronized void attack() {
+        if (this.attacking || this.isHitting) {
+            return;
+        }
+        this.attacking = true;
+        this.setAction(Action.ATTACK);
+        SettingTimer st = new SettingTimer(this, Action.ATTACK, false);
+        ActionTimer at = new ActionTimer(this, Action.ATTACK);
+        timer.schedule(st, 600);
+        timer.schedule(at, 600);
+    }
+
+    public synchronized void setInvincible(boolean value) {
+        this.invincible = value;
+    }
+
+    public synchronized boolean getInvincible() {
+        return this.invincible;
+    }
+
+    public synchronized void setHit(int damage) {
+        if (this.getInvincible()) {
+            return;
+        }
+        this.setHit(true);
+        this.setInvincible(true);
+        this.setAction(Action.HIT);
+        this.curHp -= damage;
+        SettingTimer st = new SettingTimer(this, Action.HIT, false);
+        ActionTimer at = new ActionTimer(this, Action.HIT);
+        timer.schedule(st, 500);
+        timer.schedule(at, 2500);
+    }
+
+    public boolean isMoving() {
+        return moving;
+    }
+
+    public void setMoving(boolean moving) {
+        this.moving = moving;
+    }
+
+    public void drop() {
+        if (!this.isDroping()) {
+            this.setDroping(true);
+            this.setInvincible(true);
+            this.setAction(Action.JUMP);
+        }
+        Ani.to(this, 0.015f, "y", y + 27, Ani.LINEAR);
+    }
+
+    public synchronized boolean isDroping() {
+        return this.droping;
+    }
+
+    public synchronized void setDroping(boolean value) {
+        this.droping = value;
     }
 }

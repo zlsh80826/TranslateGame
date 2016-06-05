@@ -46,11 +46,11 @@ public class Listener implements Runnable {
         while (true) {
             if (playerWaitCounter == 0) {
                 try {
-                    
+
                     player1 = listenSocket.accept();
-                    String address = player1.getInetAddress().toString();                    
+                    String address = player1.getInetAddress().toString();
                     monitor.addText("\nConnection from " + address.substring(1) + " : " + player1.getPort());
-                    
+
                     player1MonsterSocket = listenSocket.accept();
                     String addressMonster = player1MonsterSocket.getInetAddress().toString();
                     monitor.addText("\nConnection from " + addressMonster.substring(1) + " : " + player1MonsterSocket.getPort());
@@ -64,11 +64,11 @@ public class Listener implements Runnable {
                 playerWaitCounter++;
             } else if (playerWaitCounter == 1) {
                 try {
-                    
+
                     player2 = listenSocket.accept();
-                    String address = player2.getInetAddress().toString();                    
+                    String address = player2.getInetAddress().toString();
                     monitor.addText("\nConnection from " + address.substring(1) + " : " + player2.getPort());
-                    
+
                     player2MonsterSocket = listenSocket.accept();
                     String addressMonster = player2MonsterSocket.getInetAddress().toString();
                     monitor.addText("\nConnection from " + addressMonster.substring(1) + " : " + player2MonsterSocket.getPort());

@@ -128,4 +128,11 @@ public class Baron extends Monster implements Serializable {
         }
     }
 
+    public void setInfo(MonsterInfo info) {
+        this.x = info.x;
+        this.y = info.y;
+        this.curHp = info.curHp;
+        this.reverse = info.reverse;
+    }
+
 }

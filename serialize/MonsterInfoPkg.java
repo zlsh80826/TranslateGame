@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author zlsh80826
  */
-public class MonsterInfoPkg extends SerialItem implements Serializable{
+public class MonsterInfoPkg implements Serializable{
 
     public ArrayList<MushroomInfo> mushroomInfos;
     public ArrayList<BaronInfo> baronInfos;
@@ -24,6 +24,13 @@ public class MonsterInfoPkg extends SerialItem implements Serializable{
         baronInfos = new ArrayList<BaronInfo>();
         snowInfos = new ArrayList<SnowInfo>();
         dinosaurInfos = new ArrayList<DinosaurInfo>();
+    }
+    
+    public MonsterInfoPkg(MonsterInfoPkg pkg){
+        this.baronInfos = pkg.baronInfos;
+        this.dinosaurInfos = pkg.dinosaurInfos;
+        this.mushroomInfos = pkg.mushroomInfos;
+        this.snowInfos = pkg.snowInfos;
     }
     
     public void addMushroomInfo(MushroomInfo mushroomInfo){

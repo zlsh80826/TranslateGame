@@ -16,13 +16,22 @@ public class Info extends SerialItem implements Serializable{
     public float x;
     public float y;
     public boolean reverse;
+    public int curHp;
+    public int LV;
+    public int exp;
+    public int curMp;
+    
     public Career career;
     
-    Info(int action, float x, float y, boolean reverse, Career career){
+    Info(int action, float x, float y, boolean reverse, Career career, int curHp, int LV, int exp, int curMp){
         this.action = action;
         this.x = x;
         this.y = y;
         this.reverse = reverse;
         this.career = career;
+        this.curHp = curHp;
+        this.LV = LV;
+        this.exp = exp;
+        this.curMp = curMp;
     }
 }

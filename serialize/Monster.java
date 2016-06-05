@@ -7,6 +7,7 @@ package serialize;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -27,9 +28,15 @@ public abstract class Monster {
     float y;
     boolean reverse;
     public boolean active;
+    public boolean moving;
+    public boolean attacking;
+    public boolean hitting;
+    public boolean dying;
+    public boolean rest;
     public int curHp;
     public int maxHp;
     StoryMap map;
+    Timer timer = new Timer();
     
     public float width;
     public float height;
@@ -58,11 +65,4 @@ public abstract class Monster {
         this.y = y;
     }
 
-    public void setInfo(MonsterInfo info) {
-        this.x = info.x;
-        this.y = info.y;
-        this.reverse = info.reverse;
-        this.curHp = info.curHp;
-        this.reverse = info.reverse;
-    }
 }

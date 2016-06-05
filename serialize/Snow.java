@@ -96,7 +96,7 @@ public class Snow extends Monster implements Serializable {
         parent.rect(this.x + map.getX(), this.y - 120, green, 8);
         parent.fill(255, 77, 77);
         parent.rect(this.x + map.getX() + green, this.y - 120, red, 8);
-        
+
         // collision detect
         parent.noFill();
         parent.strokeWeight(3);
@@ -123,18 +123,28 @@ public class Snow extends Monster implements Serializable {
     public void setAttack() {
         action = 8;
     }
-    
-        
-    public void isCollision(Character ch){
-        float thisCenterPointX = this.x + this.width/2;
-        float thisCenterPointY = this.y + this.height/2;
-        float heroCenterPointX = ch.x + ch.width/2;
-        float heroCenterPointY = ch.y + ch.height/2;
-        
-        if(PApplet.dist(thisCenterPointX, thisCenterPointY, heroCenterPointX, heroCenterPointY) < (this.width + ch.width)/2 ){
-            if( ch.getHit() == false )
-                ch.setHit(random.nextInt(50) + 50 );
+
+    public synchronized boolean isCollision(Character ch) {
+        float thisCenterPointX = this.x + this.width / 2;
+        float thisCenterPointY = this.y + this.height / 2;
+        float heroCenterPointX = ch.x + ch.width / 2;
+        float heroCenterPointY = ch.y + ch.height / 2;
+
+        if (PApplet.dist(thisCenterPointX, thisCenterPointY, heroCenterPointX, heroCenterPointY) < (this.width + ch.width) / 2) {
+            if (ch.getHit() == false) {
+                ch.setHit(random.nextInt(50) + 50);
+            }
+            return true;
         }
+        return false;
+    }
+
+    public void setInfo(MonsterInfo info) {
+        this.x = info.x;
+        this.y = info.y;
+        this.curHp = info.curHp;
+        this.reverse = info.reverse;
+        this.action = info.action; 
     }
 
 }

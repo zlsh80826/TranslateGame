@@ -58,9 +58,9 @@ public class TranslateGame {
         RoomType type = (RoomType) out.readObject();
         if (type instanceof WaitRoomType) {
             createWaitRoom(socket, monsterSocket);
-            createPvpRoom(socket, monsterSocket);
+            createPvpRoom(socket, monsterSocket, true);
         } else if (type instanceof PvpRoomType) {
-            createPvpRoom(socket, monsterSocket);
+            createPvpRoom(socket, monsterSocket, false);
         }
     }
 
@@ -79,9 +79,10 @@ public class TranslateGame {
         }
     }
 
-    public void createPvpRoom(Socket socket, Socket monsterSocket) {
+    
+    public void createPvpRoom(Socket socket, Socket monsterSocket, boolean control) {
         PvpRear pvpRear = new PvpRear(this, socket, monsterSocket);
-        PvpFront pvpFront = new PvpFront(this, pvpRear);
+        PvpFront pvpFront = new PvpFront(this, pvpRear, control);
         pvpRear.setFront(pvpFront);
         frame.setContentPane(pvpFront);
         pvpFront.init();

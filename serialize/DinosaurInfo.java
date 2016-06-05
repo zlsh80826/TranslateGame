@@ -17,6 +17,5 @@ public class DinosaurInfo extends MonsterInfo implements Serializable  {
         super(x, y, reverse, action, curHp);
     }
 
-
     
 }

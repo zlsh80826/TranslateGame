@@ -18,4 +18,5 @@ public class MushroomInfo extends MonsterInfo implements Serializable {
     }
 
 
+
 }

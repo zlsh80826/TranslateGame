@@ -125,15 +125,26 @@ public class Dinosaur extends Monster implements Serializable {
     }
     
         
-    public void isCollision(Character ch){
+    public synchronized boolean isCollision(Character ch){
         float thisCenterPointX = this.x + this.width/2;
         float thisCenterPointY = this.y + this.height/2;
         float heroCenterPointX = ch.x + ch.width/2;
         float heroCenterPointY = ch.y + ch.height/2;
         
         if(PApplet.dist(thisCenterPointX, thisCenterPointY, heroCenterPointX, heroCenterPointY) < (this.width + ch.width)/2 ){
-            if( ch.getHit() == false )
+            if( ch.getHit() == false ){
                 ch.setHit(random.nextInt(100) + 300 );
+            }
+            return true;
         }
+        return false;
+    }
+    
+    public void setInfo(MonsterInfo info) {
+        this.x = info.x;
+        this.y = info.y;
+        this.curHp = info.curHp;
+        this.reverse = info.reverse;
+        this.action = info.action;
     }
 }
