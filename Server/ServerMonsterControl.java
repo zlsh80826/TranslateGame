@@ -12,13 +12,7 @@ import java.net.Socket;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import serialize.Action;
-import serialize.BaronInfo;
-import serialize.DinosaurInfo;
-import serialize.MonsterInfoPkg;
-import serialize.MonsterTimer;
-import serialize.MushroomInfo;
-import serialize.SnowInfo;
+import serialize.*;
 import java.util.Timer;
 
 /**
@@ -71,7 +65,7 @@ public class ServerMonsterControl extends Thread {
     public void run() {
 
         MLA.start();
-        //MLB.start();
+        MLB.start();
         while (true) {
             try {
                 sendMonsterInfo();
@@ -85,8 +79,6 @@ public class ServerMonsterControl extends Thread {
 
     public void sendMonsterInfo() {
         try {
-            //pAOut.writeObject(monsterInfoPkg);
-            //pAOut.flush();
             pBOut.writeObject(monsterInfoPkg);
             pBOut.flush();
         } catch (IOException ex) {
@@ -94,9 +86,17 @@ public class ServerMonsterControl extends Thread {
         }
     }
 
-    public synchronized void setPkg(MonsterInfoPkg pkg) {        
+    public synchronized void setPkg(MonsterInfoPkg pkg) {
         this.monsterInfoPkg = pkg;
-        System.out.println(pkg.mushroomInfos.get(0).x);
+    }
+
+    public synchronized void sendAttackRequest() {
+        try {
+            pAOut.writeObject(new AttackRequest());
+            pAOut.reset();
+        } catch (IOException ex) {
+            Logger.getLogger(ServerMonsterControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

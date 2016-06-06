@@ -80,7 +80,6 @@ public abstract class Monster {
         float heroCenterPointY = ch.y + ch.height / 2;
         
         if( (reverse && (thisCenterPointX > heroCenterPointX)) || (!reverse && (thisCenterPointX < heroCenterPointX) ) ){
-            System.out.println(thisCenterPointX + " " + heroCenterPointX);
             if ( (Math.abs(thisCenterPointX - heroCenterPointX) < (this.width + ch.width) / 2 + ch.attackRange) &&
                   Math.abs(thisCenterPointY - heroCenterPointY) < 50 ) {
                 this.hit(ch.dmg + random.nextInt(ch.dmg));

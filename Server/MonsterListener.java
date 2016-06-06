@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import serialize.AttackRequest;
 import serialize.MonsterInfoPkg;
 
 /**
@@ -33,8 +34,15 @@ public class MonsterListener extends Thread {
     
     public synchronized void recv(){
         try {
-            MonsterInfoPkg pkg = (MonsterInfoPkg)in.readObject();
-            parent.setPkg(pkg);
+            Object obj = in.readObject();
+            if(obj instanceof MonsterInfoPkg)
+                parent.setPkg((MonsterInfoPkg)obj);
+            else if(obj instanceof AttackRequest){
+                System.out.println("Server get Attack Request");
+                parent.sendAttackRequest();
+            }else{
+                System.out.println("recv unregnize");
+            }
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(MonsterListener.class.getName()).log(Level.SEVERE, null, ex);
         }

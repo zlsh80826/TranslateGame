@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import serialize.AttackRequest;
 import serialize.MonsterInfoPkg;
 
 /**
@@ -52,17 +53,34 @@ public class HandleMonster extends Thread {
 
     public void recv() {
         try {
-            MonsterInfoPkg pkg = (MonsterInfoPkg) in.readObject();
-            this.boss.setMonsterInfo(pkg);
+            Object obj = in.readObject();
+            if (obj instanceof MonsterInfoPkg) {
+                this.boss.setMonsterInfo((MonsterInfoPkg) obj);
+            } else if (obj instanceof AttackRequest) {
+                this.boss.enemy.attack();
+                System.out.println("get request");
+            } else{
+                System.out.println("unregnize");
+            }
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(HandleMonster.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public synchronized void sendInfo(MonsterInfoPkg pkg){
+
+    public synchronized void sendInfo(MonsterInfoPkg pkg) {
         try {
-            out.writeObject(new MonsterInfoPkg(pkg) );
+            out.writeObject(new MonsterInfoPkg(pkg));
             out.reset();
+        } catch (IOException ex) {
+            Logger.getLogger(HandleMonster.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public synchronized void sendAttackRequest() {
+        try {
+            out.writeObject(new AttackRequest());
+            out.reset();
+            System.out.println("!Control send request");
         } catch (IOException ex) {
             Logger.getLogger(HandleMonster.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -172,6 +172,12 @@ public class PvpFront extends PApplet {
                 }
             }
 
+            for (Mushroom mushroom : mushrooms) {
+                if (mushroom.isAttacked(enemy)) {
+                    break;
+                }
+            }
+
             for (int i = 0; i < 3; ++i) {
                 Snow snow = snows.get(i);
                 snow.display();
@@ -187,6 +193,12 @@ public class PvpFront extends PApplet {
                 }
             }
 
+            for (Snow snow : snows) {
+                if (snow.isAttacked(enemy)) {
+                    break;
+                }
+            }
+
             for (int i = 0; i < 4; ++i) {
                 Dinosaur dinosaur = dinosaurs.get(i);
                 dinosaur.display();
@@ -198,6 +210,12 @@ public class PvpFront extends PApplet {
 
             for (Dinosaur dinosaur : dinosaurs) {
                 if (dinosaur.isAttacked(hero)) {
+                    break;
+                }
+            }
+
+            for (Dinosaur dinosaur : dinosaurs) {
+                if (dinosaur.isAttacked(enemy)) {
                     break;
                 }
             }
@@ -240,7 +258,12 @@ public class PvpFront extends PApplet {
                     this.hero.setTransPort(point.x, point.y);
                 });
             } else if (keyCode == CONTROL) {
-                this.hero.attack();
+                if (control) {
+                    this.hero.attack();
+                } else {
+                    this.HM.sendAttackRequest();
+                    this.hero.attack();
+                }
             }
         }
     }
