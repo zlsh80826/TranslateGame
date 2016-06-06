@@ -20,7 +20,7 @@ import translategame.PvpFront;
  */
 public class MagicMan extends Character implements Serializable {
 
-    public MagicMan(PvpFront parent, float x, float y, StoryMap map) {
+    public MagicMan(PvpFront parent, float x, float y, StoryMap map, boolean control) {
         this.imageCount = new ArrayList<Integer>();
         this.imageCount.add(3);
         this.imageCount.add(3);
@@ -78,20 +78,20 @@ public class MagicMan extends Character implements Serializable {
 
         this.map = map;
         this.LV = 1;
-        this.MaxHp = (int) (300 * Math.pow(1.1, LV));
+        this.MaxHp = (int) (20 * Math.pow(1.2, LV));
         this.curHp = MaxHp;
         this.MaxMp = (int) (600 * Math.pow(1.1, LV));
         this.curMp = MaxMp;
         this.width = images.get(0).get(0).width;
         this.height = images.get(0).get(0).height;
         this.aniseq = new AniSequence(this.parent);
-        this.dmg = (int)(20 * Math.pow(1.9, LV));
+        this.dmg = (int)(2 * Math.pow(1.3, LV));
         this.attackRange = 200;
+        this.control = control;
     }
 
     @Override
     public void display() {
-        super.display();
         if (reverse == true) {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
                     this.x - getWidth() + offset.get(this.getAction()) + map.getX(),
@@ -99,10 +99,20 @@ public class MagicMan extends Character implements Serializable {
         } else {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x + map.getX(), this.y - getHeight() + map.getY());
         }
+        super.display();
     }
 
     @Override
     public Info getInfo() {
-        return new Info(action, x, y, reverse, Career.MagicMan, this.curHp, this.LV, this.exp, this.curMp);
+        return new Info(action, x, y, reverse, Career.MagicMan, this.curHp, this.LV, this.exp, this.curMp, this.getInvincible(), this.MaxHp, this.MaxMp);
+    }
+
+    @Override
+    public void updateInfo() {
+        this.dmg = (int)(2 * Math.pow(1.3, LV));
+        this.MaxHp = (int) (20 * Math.pow(1.2, LV));
+        this.curHp = MaxHp;
+        this.MaxMp = (int) (600 * Math.pow(1.1, LV));
+        this.curMp = MaxMp;
     }
 }

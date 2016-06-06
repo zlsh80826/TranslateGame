@@ -17,13 +17,17 @@ public class Info extends SerialItem implements Serializable{
     public float y;
     public boolean reverse;
     public int curHp;
+    public int maxHp;
+    public int maxMp;
     public int LV;
     public int exp;
     public int curMp;
+    public boolean invincible;
     
     public Career career;
     
-    Info(int action, float x, float y, boolean reverse, Career career, int curHp, int LV, int exp, int curMp){
+    Info(int action, float x, float y, boolean reverse, Career career, int curHp, int LV, int exp, int curMp, boolean invincible
+        , int maxHp, int maxMp){
         this.action = action;
         this.x = x;
         this.y = y;
@@ -33,5 +37,8 @@ public class Info extends SerialItem implements Serializable{
         this.LV = LV;
         this.exp = exp;
         this.curMp = curMp;
+        this.invincible = invincible;
+        this.maxHp = maxHp;
+        this.maxMp = maxMp;
     }
 }

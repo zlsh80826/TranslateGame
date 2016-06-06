@@ -38,7 +38,7 @@ public class MonsterListener extends Thread {
             if(obj instanceof MonsterInfoPkg)
                 parent.setPkg((MonsterInfoPkg)obj);
             else if(obj instanceof AttackRequest){
-                System.out.println("Server get Attack Request");
+               // System.out.println("Server get Attack Request");
                 parent.sendAttackRequest();
             }else{
                 System.out.println("recv unregnize");

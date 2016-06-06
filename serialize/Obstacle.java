@@ -30,10 +30,10 @@ public class Obstacle {
     }
 
     public void display() {
-        parent.noFill();
+        /*parent.noFill();
         parent.stroke(200, 153, 126, 250);
         parent.strokeWeight(3);
-        parent.rect(x + map.getX(), y + map.getY(), width, height);
+        parent.rect(x + map.getX(), y + map.getY(), width, height);*/
     }
     
     public boolean onGround(Character ch){

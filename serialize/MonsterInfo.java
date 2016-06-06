@@ -18,14 +18,18 @@ public class MonsterInfo implements Serializable{
     public float x;
     public float y;
     public boolean rest;
+    public boolean die;
+    public boolean dying;
     
-    public MonsterInfo(float x, float y, boolean reverse, int action, int curHp){
+    public MonsterInfo(float x, float y, boolean reverse, int action, int curHp, boolean die, boolean dying){
         this.x = x;
         this.y = y;
         this.reverse = reverse;
         this.action = action;
         this.curHp = curHp;       
         this.rest = true;
+        this.die = die;
+        this.dying = dying;
     }
     
     
@@ -36,5 +40,7 @@ public class MonsterInfo implements Serializable{
         this.curHp = monster.curHp;
         this.action = monster.action;
         this.rest = monster.rest;
+        this.dying = monster.dying;
+        this.die = monster.die;
     }
 }

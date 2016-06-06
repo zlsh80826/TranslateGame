@@ -7,8 +7,11 @@ package serialize;
 
 import de.looksgood.ani.Ani;
 import de.looksgood.ani.AniSequence;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
 import translategame.PvpFront;
@@ -28,6 +31,10 @@ public abstract class Character {
     private boolean attacking;
     private boolean moving;
     public boolean dump;
+    public boolean cooldown = false;
+    public boolean control;
+    public boolean freeze;
+    public int freezeTime;
 
     PvpFront parent;
     ArrayList<ArrayList<PImage>> images;
@@ -39,7 +46,7 @@ public abstract class Character {
     int action;
     boolean reverse;
     boolean revealIntroducion;
-    public int curHp;
+    protected int curHp;
     public int MaxHp;
     public int LV;
     public int exp;
@@ -50,6 +57,7 @@ public abstract class Character {
     public Timer timer;
     public int dmg;
     public float attackRange;
+    public int heal = 0;
     AniSequence aniseq;
 
     int[] expTable = {15, 34, 57, 92, 135, 372, 560, 840, 1242, 1490, 2145, 3088, 4446, 6402};
@@ -75,12 +83,21 @@ public abstract class Character {
     }
 
     public void display() {
+        
+        if( ++heal % 60 == 0){
+            if( (control && this.x < 300 && this.y > 500) ||
+                (!control && this.x > 1000 && this.y > 500)){
+                this.setCurHp(-MaxHp/10);
+            }
+        }
+        
         // gravity
         if (this.parent.getStage() == Stage.START && this.dump == false) {
             if (map.checkOnGround(this)) {
                 if (this.droping) {
                     this.setAction(Action.HIT);
-                    this.setInvincible(false);
+                    if(!freeze)
+                        this.setInvincible(false);
                 }
                 this.setDroping(false);
             } else if (this.jumping == false) {
@@ -112,16 +129,16 @@ public abstract class Character {
             parent.fill(10, 10, 10, 200);
             parent.rect(this.x + 10 + map.getX() + blue, this.y - 100, nblue, 8);
 
-            // collision detect
+            /*// collision detect
             parent.noFill();
             parent.strokeWeight(3);
             parent.stroke(255, 0, 0);
-            parent.rect(this.x + map.getX(), this.y + map.getY() - height, width, height);
+            parent.rect(this.x + map.getX(), this.y + map.getY() - height, width, height);*/
 
-            parent.fill(255, 0, 0);
-            parent.ellipse(this.x + map.getX() + width / 2, this.y + map.getY() - height / 2, 50, 50);
+            /*parent.fill(255, 0, 0);
+            parent.ellipse(this.x + map.getX() + width / 2, this.y + map.getY() - height / 2, 10, 10);*/
 
-            if (reverse) {
+            /*if (reverse) {
                 parent.noFill();
                 parent.strokeWeight(3);
                 parent.stroke(0, 255, 0);
@@ -131,7 +148,7 @@ public abstract class Character {
                 parent.strokeWeight(3);
                 parent.stroke(0, 255, 0);
                 parent.rect(this.x + map.getX() - attackRange, this.y + map.getY() - height, attackRange, height);
-            }
+            }*/
         }
     }
 
@@ -139,9 +156,11 @@ public abstract class Character {
         String lvStr = "Lv: " + nf(LV, 2);
         String hpStr = "Hp: " + curHp + " / " + MaxHp;
         String mpStr = "Mp: " + curMp + " / " + MaxMp;
-        parent.fill(0);
-        parent.stroke(77, 255, 77);
+        parent.fill(255, 255, 255, 200);
+        parent.stroke(255, 255, 255);
         parent.strokeWeight(3);
+        parent.rect(880, 15, 240, 150, 20);
+        parent.fill(0);
         parent.text(lvStr, 900, 50);
         parent.text(hpStr, 900, 100);
         parent.text(mpStr, 900, 150);
@@ -225,6 +244,9 @@ public abstract class Character {
         this.LV = info.LV;
         this.exp = info.exp;
         this.curMp = info.curMp;
+        this.MaxHp = info.maxHp;
+        this.MaxMp = info.maxMp;
+        //this.setInvincible(info.invincible);
     }
 
     public void setLeft(StoryMap map) {
@@ -292,6 +314,10 @@ public abstract class Character {
         if (this.attacking || this.isHitting) {
             return;
         }
+        if( (this.parent.enemy.x > this.x) && this.reverse && (this.parent.enemy.x < this.x + this.attackRange) )
+            this.parent.rear.sendDmgRequest(this.dmg);
+        else if((this.parent.enemy.x < this.x) && !this.reverse && (this.parent.enemy.x > this.x - this.attackRange))
+            this.parent.rear.sendDmgRequest(this.dmg);
         this.attacking = true;
         this.setAction(Action.ATTACK);
         SettingTimer st = new SettingTimer(this, Action.ATTACK, false);
@@ -315,7 +341,7 @@ public abstract class Character {
         this.setHit(true);
         this.setInvincible(true);
         this.setAction(Action.HIT);
-        this.curHp -= damage;
+        this.setCurHp(damage);
         if (dir) {
             Ani.to(this, 0.3f, "x", x - 20);
         } else {
@@ -355,4 +381,47 @@ public abstract class Character {
     public synchronized boolean getAttacking() {
         return this.attacking;
     }
+    
+    public void setCurHp(int dmg){
+        if(this.curHp < dmg){
+            this.curHp = 0;
+            this.die();
+        }else if(this.curHp - dmg > this.MaxHp){
+            this.curHp = MaxHp;
+        }else{
+            this.curHp -= dmg;
+        }        
+    }
+    
+    public synchronized void die(){
+        if(control){
+            this.setTransPort(100, 590);
+            this.reverse = true;
+        }else{
+            this.setTransPort(1350, 590);
+            this.reverse = false;
+        }
+        this.parent.rear.sendExpRequest(LV * LV * 15);
+        freezeTime = 3000 * LV;
+        this.freeze = true;
+        this.setInvincible(true);
+        this.curHp = MaxHp;
+        this.setAction(Action.STAND);
+        ActionTimer at = new ActionTimer(this, Action.DIE);
+        timer.schedule(at, freezeTime);
+    }
+    
+    public synchronized void pulseExp(int getExp){
+        exp += getExp;
+        if(exp >= this.expTable[this.LV-1]){
+            //System.out.println(exp);
+            this.exp -= this.expTable[this.LV-1];
+            //System.out.println(exp);
+            ++this.LV;
+            this.updateInfo();
+            //System.out.println(LV);
+        }
+    }
+    
+    abstract public void updateInfo();
 }

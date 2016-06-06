@@ -40,8 +40,12 @@ public class PvpListen extends Thread {
             //System.out.println("Recv Obj...");
             if (pkg instanceof Situation) {
                 parseSituation((Situation) pkg);
-            } else if(pkg instanceof Info){
-                parent.sendInfoToPeer(identify, (Info)pkg);
+            } else if (pkg instanceof Info) {
+                parent.sendInfoToPeer(identify, (Info) pkg);
+            } else if (pkg instanceof ExpRequest) {
+                parent.sendExpRequestToPeer(identify, (ExpRequest) pkg);
+            } else if (pkg instanceof DmgRequest) {
+                parent.sendDmgRequestToPeer(identify, (DmgRequest) pkg);
             }
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println("recv packet error");

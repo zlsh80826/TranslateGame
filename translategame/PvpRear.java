@@ -28,7 +28,7 @@ public class PvpRear extends Thread {
     ObjectInputStream monsterIn;
     boolean isRunning;
     HandleMonster monsterHandler;
-    
+
     Socket monsterSocket;
 
     PvpRear(TranslateGame parent, Socket socket, Socket monsterSocket) {
@@ -69,12 +69,16 @@ public class PvpRear extends Thread {
 
     public void recv() {
         try {
-             SerialItem obj = (SerialItem)in.readObject();
+            SerialItem obj = (SerialItem) in.readObject();
             //System.out.println("Recv obj...");
             if (obj instanceof Situation) {
                 this.parseSituation((Situation) obj);
             } else if (obj instanceof Info) {
-                this.front.enemy.setInfo( (Info) obj );
+                this.front.enemy.setInfo((Info) obj);
+            } else if (obj instanceof ExpRequest) {
+                this.front.hero.pulseExp(((ExpRequest) (obj)).exp);
+            } else if (obj instanceof DmgRequest) {
+                this.front.hero.setCurHp(((DmgRequest) (obj)).dmg);
             } else {
                 System.out.println("Client recv unrecognize packet");
             }
@@ -114,6 +118,25 @@ public class PvpRear extends Thread {
     public void sendInfo(Info info) {
         try {
             out.writeObject(info);
+            out.reset();
+        } catch (IOException ex) {
+            Logger.getLogger(PvpRear.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void sendExpRequest(int value) {
+        try {
+            out.writeObject(new ExpRequest(value));
+            out.reset();
+        } catch (IOException ex) {
+            Logger.getLogger(PvpRear.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void sendDmgRequest(int value) {
+        try {
+            out.writeObject(new DmgRequest(value));
+            out.reset();
         } catch (IOException ex) {
             Logger.getLogger(PvpRear.class.getName()).log(Level.SEVERE, null, ex);
         }

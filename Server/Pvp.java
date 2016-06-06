@@ -72,7 +72,7 @@ public class Pvp extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         control = new ServerMonsterControl(this.monsterSocketA, this.monsterSocketB);
     }
 
@@ -112,7 +112,7 @@ public class Pvp extends Thread {
     }
 
     public void sendStartGame() {
-        System.out.println("Send start game");
+        //System.out.println("Send start game");
         try {
             pAOut.writeObject(new Situation("startgame", pBInfo));
             pAOut.flush();
@@ -189,6 +189,38 @@ public class Pvp extends Thread {
 
     public synchronized boolean getStartGame() {
         return this.startGame;
+    }
+
+    public void sendExpRequestToPeer(int identify, ExpRequest er) {
+        if (identify == 0) {
+            try {
+                pBOut.writeObject(er);
+            } catch (IOException ex) {
+                Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                pAOut.writeObject(er);
+            } catch (IOException ex) {
+                Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void sendDmgRequestToPeer(int identify, DmgRequest er) {
+        if (identify == 0) {
+            try {
+                pBOut.writeObject(er);
+            } catch (IOException ex) {
+                Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                pAOut.writeObject(er);
+            } catch (IOException ex) {
+                Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
 }

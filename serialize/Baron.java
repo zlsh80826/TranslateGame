@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
+import translategame.PvpFront;
 
 /**
  *
@@ -22,7 +23,7 @@ public class Baron extends Monster implements Serializable {
     // hit 
     // die
     // attack
-    public Baron(PApplet parent, float x, float y, StoryMap map) {
+    public Baron(PvpFront parent, float x, float y, StoryMap map) {
         this.frame = new ArrayList<Integer>();
         for (int i = 0; i < 10; ++i) {
             frame.add(0);
@@ -132,11 +133,14 @@ public class Baron extends Monster implements Serializable {
         }
     }
 
-    public void setInfo(MonsterInfo info) {
-        this.x = info.x;
-        this.y = info.y;
-        this.curHp = info.curHp;
-        this.reverse = info.reverse;
+    @Override
+    public void sendExp(Character ch) {
+        ch.pulseExp(500);
+    }
+
+    @Override
+    public int getExp() {
+        return 500;
     }
 
 }
