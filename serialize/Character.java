@@ -94,10 +94,6 @@ public abstract class Character {
             frame.set(this.getAction(), temp);
         }
 
-        if (revealIntroducion) {
-            parent.text("SwordMan", 574, 200);
-        }
-
         if (parent.getStage() == Stage.START) {
             float green = 80 * curHp / MaxHp;
             float red = 80 - green;

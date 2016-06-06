@@ -77,10 +77,10 @@ public class SwordMan extends Character implements Serializable {
 
         this.map = map;
         this.LV = 1;
-        this.MaxHp = (int)(1000 * Math.pow(1.1, LV));
+        this.MaxHp = (int) (1000 * Math.pow(1.1, LV));
         this.curHp = MaxHp;
-        this.MaxMp = (int)(200 * Math.pow(1.1, LV));
-        this.dmg = (int)(30 * Math.pow(1.7, LV));
+        this.MaxMp = (int) (200 * Math.pow(1.1, LV));
+        this.dmg = (int) (30 * Math.pow(1.7, LV));
         this.curMp = MaxMp;
         this.width = images.get(0).get(0).width;
         this.height = images.get(0).get(0).height;
@@ -91,14 +91,23 @@ public class SwordMan extends Character implements Serializable {
     @Override
     public void display() {
         super.display();
-      
+
         if ((reverse == true && action != 6) || (action == 6 && reverse == false)) {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
                     this.x - getWidth() + offset.get(this.getAction()) + map.getX(),
                     this.y - getHeight() + map.getY());
         } else {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x + map.getX(), this.y - getHeight() + map.getY());
-        }        
+        }
+
+        if (revealIntroducion) {
+            parent.stroke(0);
+            parent.strokeWeight(3);
+            parent.fill(200, 153, 126, 150);
+            parent.rect(750, 100, 300, 400, 25);
+            parent.fill(0);
+            parent.text("SwordMan", 765, 180);
+        }
     }
 
     @Override
