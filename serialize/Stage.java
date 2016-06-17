@@ -10,5 +10,5 @@ package serialize;
  * @author zlsh80826
  */
 public enum Stage {
-    SELECT, INIT, START, END
+    SELECT, INIT, START, END, PVP
 }

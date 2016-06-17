@@ -112,7 +112,7 @@ public class SwordMan extends Character implements Serializable {
 
     @Override
     public Info getInfo() {
-        return new Info(action, x, y, reverse, Career.SwordMan, this.curHp, this.LV, this.exp, this.curMp, this.getInvincible(), this.MaxHp, this.MaxMp);
+        return new Info(action, x, y, reverse, Career.SwordMan, this.curHp, this.LV, 0, this.curMp, this.getInvincible(), this.MaxHp, this.MaxMp, this.lose, 0, "info");
     }
 
     @Override

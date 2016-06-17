@@ -69,38 +69,56 @@ public class PvpRear extends Thread {
 
     public void recv() {
         try {
-            SerialItem obj = (SerialItem) in.readObject();
-            //System.out.println("Recv obj...");
+            Object obj = in.readObject();
             if (obj instanceof Situation) {
                 this.parseSituation((Situation) obj);
             } else if (obj instanceof Info) {
-                this.front.enemy.setInfo((Info) obj);
-            } else if (obj instanceof ExpRequest) {
-                this.front.hero.pulseExp(((ExpRequest) (obj)).exp);
-            } else if (obj instanceof DmgRequest) {
-                this.front.hero.setCurHp(((DmgRequest) (obj)).dmg);
+                if (null != ((Info) obj).cmd) {
+                    switch (((Info) obj).cmd) {
+                        case "info":
+                            this.front.enemy.setInfo((Info) obj);
+                            break;
+                        case "exp":
+                            this.front.hero.pulseExp(((Info) obj).exp);
+                            break;
+                        case "dmg":
+                            this.front.hero.setCurHp(((Info) (obj)).dmg);
+                            break;
+                        case "time":
+                            this.front.time = Integer.toString(((Info) obj).dmg);
+                        default:
+                            break;
+                    }
+                }
             } else {
                 System.out.println("Client recv unrecognize packet");
+                in.reset();
             }
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(WaitRoomRear.class.getName()).log(Level.SEVERE, null, ex);
-            //System.out.println("QQ");
+            try {
+                in.close();
+                in = new ObjectInputStream(socket.getInputStream());
+            } catch (IOException ex1) {
+                Logger.getLogger(PvpRear.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+            
         }
     }
 
     void parseSituation(Situation status) {
         System.out.println("Status: " + status.getStatus());
         if ("startgame".equals(status.getStatus())) {
-            //System.out.println(status.getCareer());
-            //front.startGame(status.getCareer());
             monsterHandler.start();
             front.startGame(status.getInfo());
+        } else if ("startpvp".equals(status.getStatus())) {
+            front.pvp();
         }
     }
 
     public void sendLoadComplete() {
         try {
             out.writeObject(new Situation("loadcomplete"));
+            out.flush();
         } catch (IOException ex) {
             System.out.println("send complete status error");
         }
@@ -110,6 +128,7 @@ public class PvpRear extends Thread {
         try {
             //out.writeObject(new Situation("selectcomplete", career));
             out.writeObject(new Situation("selectcomplete", info));
+            out.flush();
         } catch (IOException ex) {
             System.out.println("send complete status error");
         }
@@ -126,7 +145,7 @@ public class PvpRear extends Thread {
 
     public void sendExpRequest(int value) {
         try {
-            out.writeObject(new ExpRequest(value));
+            out.writeObject(new Info(0, 0, 0, false, Career.SwordMan, 0, 0, value, 0, false, 0, 0, false, 0, "exp"));
             out.reset();
         } catch (IOException ex) {
             Logger.getLogger(PvpRear.class.getName()).log(Level.SEVERE, null, ex);
@@ -135,7 +154,7 @@ public class PvpRear extends Thread {
 
     public void sendDmgRequest(int value) {
         try {
-            out.writeObject(new DmgRequest(value));
+            out.writeObject(new Info(0, 0, 0, false, Career.SwordMan, 0, 0, 0, 0, false, 0, 0, false, value, "dmg"));
             out.reset();
         } catch (IOException ex) {
             Logger.getLogger(PvpRear.class.getName()).log(Level.SEVERE, null, ex);

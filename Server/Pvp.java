@@ -35,6 +35,7 @@ public class Pvp extends Thread {
     boolean selectComplete = false;
     boolean pASelectComplete = false;
     boolean pBSelectComplete = false;
+    boolean startTimer = false;
     boolean startGame = false;
     MonsterInfoPkg monsterInfoPkg;
     ServerMonsterControl control;
@@ -42,6 +43,7 @@ public class Pvp extends Thread {
     //Career pBCareer;
     Info pAInfo;
     Info pBInfo;
+    int time = 90;
 
     public Pvp(Listener monitor, Socket pA, Socket pB, Socket monsterSocketA, Socket monsterSocketB) {
         this.pA = pA;
@@ -95,17 +97,40 @@ public class Pvp extends Thread {
             if (this.getStartGame()) {
                 control.start();
                 this.setStartGame(false);
+                this.startTimer = true;
             }
-            //System.out.println(selectComplete);
+            if (startTimer) {
+                try {
+                    sendMessage(time --);
+                    Thread.sleep(1000);
+                    if(time == 0){
+                        startTimer =false;
+                        sendPVPSignal();
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
+    }
+    
+    public synchronized void sendPVPSignal(){
+        try {
+            pAOut.writeObject(new Situation("startpvp"));
+            pAOut.reset();
+            pBOut.writeObject(new Situation("startpvp"));
+            pBOut.reset();
+        } catch (IOException ex) {
+            System.out.println("send start select sitution error");
+        }        
     }
 
     public void sendStartSelect() {
         try {
             pAOut.writeObject(new Situation("startselect"));
-            pAOut.flush();
+            pAOut.reset();
             pBOut.writeObject(new Situation("startselect"));
-            pBOut.flush();
+            pBOut.reset();
         } catch (IOException ex) {
             System.out.println("send start select sitution error");
         }
@@ -115,26 +140,27 @@ public class Pvp extends Thread {
         //System.out.println("Send start game");
         try {
             pAOut.writeObject(new Situation("startgame", pBInfo));
-            pAOut.flush();
+            pAOut.reset();
             pBOut.writeObject(new Situation("startgame", pAInfo));
-            pBOut.flush();
+            pBOut.reset();
         } catch (IOException ex) {
             System.out.println("send start select sitution error");
         }
         this.setStartGame(true);
     }
 
-    public void sendInfoToPeer(int identify, Info info) {
+    public synchronized void sendInfoToPeer(int identify, Info info) {
         if (identify == 0) {
             try {
                 pBOut.writeObject(info);
-                pBOut.flush();
+                pBOut.reset();
             } catch (IOException ex) {
                 Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (identify == 1) {
             try {
                 pAOut.writeObject(info);
+                pAOut.reset();
             } catch (IOException ex) {
                 Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -191,35 +217,50 @@ public class Pvp extends Thread {
         return this.startGame;
     }
 
-    public void sendExpRequestToPeer(int identify, ExpRequest er) {
+    public synchronized void sendExpRequestToPeer(int identify, ExpRequest er) {
         if (identify == 0) {
             try {
                 pBOut.writeObject(er);
+                pBOut.reset();
             } catch (IOException ex) {
                 Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             try {
                 pAOut.writeObject(er);
+                pAOut.reset();
             } catch (IOException ex) {
                 Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
-    public void sendDmgRequestToPeer(int identify, DmgRequest er) {
+    public synchronized void sendDmgRequestToPeer(int identify, DmgRequest er) {
         if (identify == 0) {
             try {
                 pBOut.writeObject(er);
+                pBOut.reset();
             } catch (IOException ex) {
                 Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             try {
                 pAOut.writeObject(er);
+                pAOut.reset();
             } catch (IOException ex) {
                 Logger.getLogger(Pvp.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+
+    public void sendMessage(int value) {
+        try {
+            pAOut.writeObject(new Info(0, 0, 0, false, Career.SwordMan, 0, 0, 0, 0, false, 0, 0, false, value, "time"));
+            pAOut.reset();
+            pBOut.writeObject(new Info(0, 0, 0, false, Career.SwordMan, 0, 0, 0, 0, false, 0, 0, false, value, "time"));
+            pBOut.reset();
+        } catch (IOException ex) {
+            System.out.println("send message error");
         }
     }
 

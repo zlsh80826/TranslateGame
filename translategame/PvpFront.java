@@ -5,6 +5,8 @@
  */
 package translategame;
 
+import ddf.minim.AudioPlayer;
+import ddf.minim.Minim;
 import de.looksgood.ani.Ani;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class PvpFront extends PApplet {
     boolean control;
     boolean MIPKGINIT = false;
     PFont font;
+    PFont clock;
     Career career;
     public serialize.Character hero;
     public serialize.Character enemy;
@@ -53,6 +56,12 @@ public class PvpFront extends PApplet {
     MonsterInfoPkg monsterInfoPkg;
     HandleMonster HM;
     Random random = new Random();
+    String time = "90";
+    boolean win = false;
+    int count = 0;
+
+    Minim minim;
+    AudioPlayer song;
 
     PvpFront(TranslateGame parent, PvpRear rear, boolean control) {
         this.parent = parent;
@@ -63,7 +72,9 @@ public class PvpFront extends PApplet {
 
     public void initial() {
         // create object
-
+        clock = this.createFont("src/material/Courier Prime Sans.ttf", 64, true);
+        font = this.createFont("src/material/Tekton.otf", 64, true);
+        textFont(font);
         // map
         this.bgOffsetX = 0f;
         this.bgOffsetY = 0f;
@@ -111,6 +122,8 @@ public class PvpFront extends PApplet {
             initPkg();
         }
 
+        minim = new Minim(this);
+        song = minim.loadFile("src/material/output.mp3");
         // complete protocaol
         rear.sendLoadComplete();
         gameStage = Stage.SELECT;
@@ -122,8 +135,6 @@ public class PvpFront extends PApplet {
         smooth();
         Ani.init(this);
         gameStage = Stage.INIT;
-        font = this.createFont("src/material/Tekton.otf", 64, true);
-        textFont(font);
     }
 
     @Override
@@ -136,6 +147,9 @@ public class PvpFront extends PApplet {
             this.magicMan.display();
             this.archer.display();
             this.swordMan.display();
+            if (!song.isPlaying()) {
+                song.play();
+            }
         } else if (gameStage == Stage.START) {
             map.display();
 
@@ -147,10 +161,9 @@ public class PvpFront extends PApplet {
                 revpt.display();
             });
 
-            barons.stream().forEach((baron) -> {
+            /*barons.stream().forEach((baron) -> {
                 baron.display();
-            });
-
+            });*/
             for (int i = 0; i < 10; ++i) {
                 Mushroom mushroom = mushrooms.get(i);
                 mushroom.display();
@@ -160,7 +173,7 @@ public class PvpFront extends PApplet {
                 }
             }
 
-            if(this.hero.getInvincible() == false){
+            if (this.hero.getInvincible() == false) {
                 for (Mushroom mushroom : mushrooms) {
                     if (mushroom.isCollision(hero)) {
                         break;
@@ -242,15 +255,51 @@ public class PvpFront extends PApplet {
             this.hero.displayInfo();
             this.enemy.display();
             this.rear.sendInfo(this.hero.getInfo());
+
             if (control) {
                 this.HM.sendInfo(monsterInfoPkg);
+            }
+            fill(204, 51, 0);
+            int min = Integer.parseInt(time) / 60;
+            int sec = Integer.parseInt(time) % 60;
+            String t = nf(min, 2) + ":" + nf(sec, 2);
+            textFont(font, 64);
+            text(t, 522, 100);
+            textFont(font, 32);
+        } else if (gameStage == Stage.PVP) {
+            map.display();
+
+            doors.stream().forEach((door) -> {
+                door.display();
+            });
+
+            revPt.stream().forEach((revpt) -> {
+                revpt.display();
+            });
+            this.hero.display();
+            this.hero.displayInfo();
+            this.enemy.display();
+            this.rear.sendInfo(this.hero.getInfo());
+
+            if (this.enemy.lose) {
+                this.win = true;
+                this.end();
+            }
+        } else if (gameStage == Stage.END) {
+            if (++count % 3 == 0) {
+                this.rear.sendInfo(this.hero.getInfo());
+            }
+            if (win) {
+                text("win", 522, 200);
+            } else {
+                text("lose", 522, 200);
             }
         }
     }
 
     @Override
     public void keyPressed() {
-        if (gameStage == Stage.START) {
+        if (gameStage == Stage.START || gameStage == Stage.PVP) {
             if (key == 's') {
             } else if (key == 'c') {
                 this.hero.setClimb();
@@ -286,7 +335,7 @@ public class PvpFront extends PApplet {
 
     @Override
     public void keyReleased() {
-        if (gameStage == Stage.START) {
+        if (gameStage == Stage.START || gameStage == Stage.PVP) {
             this.hero.setMoving(false);
         }
     }
@@ -439,5 +488,28 @@ public class PvpFront extends PApplet {
         for (int i = 0; i < monsterInfoPkg.dinosaurInfos.size(); ++i) {
             dinosaurs.get(i).setInfo(monsterInfoPkg.dinosaurInfos.get(i));
         }
+    }
+
+    public void pvp() {
+        mushrooms.stream().forEach((mushroom) -> {
+            mushroom.die();
+        });
+        snows.stream().forEach((snow) -> {
+            snow.die();
+        });
+        dinosaurs.stream().forEach((dinosaur) -> {
+            dinosaur.die();
+        });
+        this.hero.die();
+        if (control) {
+            this.hero.x = 100;
+        } else {
+            this.hero.x = 1300;
+        }
+        this.gameStage = Stage.PVP;
+    }
+
+    public void end() {
+        this.gameStage = Stage.END;
     }
 }

@@ -81,7 +81,7 @@ public class ArchMan extends Character implements Serializable {
         this.MaxHp = (int) (25 * Math.pow(1.25, LV));
         this.curHp = MaxHp;
         this.MaxMp = (int) (300 * Math.pow(1.1, LV));
-        this.dmg = (int)(3 * Math.pow(1.28, LV));
+        this.dmg = (int) (3 * Math.pow(1.28, LV));
         this.curMp = MaxMp;
         this.width = images.get(0).get(0).width;
         this.height = images.get(0).get(0).height;
@@ -99,12 +99,20 @@ public class ArchMan extends Character implements Serializable {
         } else {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x + map.getX(), this.y - getHeight() + map.getY());
         }
+        if (revealIntroducion) {
+            parent.stroke(0);
+            parent.strokeWeight(3);
+            parent.fill(200, 153, 126, 150);
+            parent.rect(750, 100, 300, 400, 25);
+            parent.fill(0);
+            parent.text("Archer", 765, 180);
+        }
         super.display();
     }
 
     @Override
     public Info getInfo() {
-        return new Info(action, x, y, reverse, Career.Archer, this.curHp, this.LV, this.exp, this.curMp, this.getInvincible(), this.MaxHp, this.MaxMp);
+        return new Info(action, x, y, reverse, Career.Archer, this.curHp, this.LV, 0, this.curMp, this.getInvincible(), this.MaxHp, this.MaxMp, this.lose, 0, "info");
     }
 
     @Override
@@ -112,7 +120,7 @@ public class ArchMan extends Character implements Serializable {
         this.MaxHp = (int) (25 * Math.pow(1.25, LV));
         this.curHp = MaxHp;
         this.MaxMp = (int) (300 * Math.pow(1.1, LV));
-        this.dmg = (int)(3 * Math.pow(1.28, LV));
+        this.dmg = (int) (3 * Math.pow(1.28, LV));
         this.curMp = MaxMp;
     }
 }

@@ -35,6 +35,7 @@ public abstract class Character {
     public boolean control;
     public boolean freeze;
     public int freezeTime;
+    public boolean lose = false;
 
     PvpFront parent;
     ArrayList<ArrayList<PImage>> images;
@@ -92,7 +93,7 @@ public abstract class Character {
         }
         
         // gravity
-        if (this.parent.getStage() == Stage.START && this.dump == false) {
+        if ( ( (this.parent.getStage() == Stage.PVP) ||  (this.parent.getStage() == Stage.START) ) && this.dump == false ) {
             if (map.checkOnGround(this)) {
                 if (this.droping) {
                     this.setAction(Action.HIT);
@@ -111,7 +112,7 @@ public abstract class Character {
             frame.set(this.getAction(), temp);
         }
 
-        if (parent.getStage() == Stage.START) {
+        if (parent.getStage() == Stage.START || parent.getStage() == Stage.PVP) {
             float green = 80 * curHp / MaxHp;
             float red = 80 - green;
             //parent.noStroke();
@@ -242,11 +243,10 @@ public abstract class Character {
         this.reverse = info.reverse;
         this.curHp = info.curHp;
         this.LV = info.LV;
-        this.exp = info.exp;
         this.curMp = info.curMp;
         this.MaxHp = info.maxHp;
         this.MaxMp = info.maxMp;
-        //this.setInvincible(info.invincible);
+        this.lose = info.lose;
     }
 
     public void setLeft(StoryMap map) {
@@ -394,6 +394,11 @@ public abstract class Character {
     }
     
     public synchronized void die(){
+        if(this.parent.getStage() == Stage.PVP ){
+            this.lose = true;
+            this.parent.end();
+            return ;
+        }
         if(control){
             this.setTransPort(100, 590);
             this.reverse = true;
