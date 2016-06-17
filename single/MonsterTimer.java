@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package serialize;
+package single;
 
+import serialize.*;
 import java.util.TimerTask;
 
 /**

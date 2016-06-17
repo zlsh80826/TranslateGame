@@ -27,7 +27,7 @@ public class Door {
     PImage[] images;
     PApplet parent;
     StoryMap map;
-    PVector point;
+    final PVector point;
 
     public Door(PApplet parent, float x, float y, StoryMap map, float pointX, float pointY) {
         this.parent = parent;
@@ -58,17 +58,22 @@ public class Door {
             frame = (frame + 1) % (imageCount);
         }
         parent.image(images[frame], x - images[frame].width + map.getX(), y - images[frame].height + map.getY());
+        
+        float thisX = x - images[frame].width/2;
+        float thisY = y - images[frame].height/2;
+        
     }    
     
     public void setPoint(float x, float y){
         point.set(x, y);
     }
     
-    public PVector trnasport(float chX, float chY){
-        System.out.println(chX + " " + chY + " " + x + y);
-        if( PApplet.dist(chX, chY, x - images[frame].width, y) < 50 )
-            return point;
-        else
-            return null;
+    public synchronized void trnasport(Character ch){
+        float heroX = ch.x + ch.width / 2;
+        float heroY = ch.y - ch.height / 2;
+        float thisX = x - images[frame].width/2;
+        float thisY = y - images[frame].height/2;
+        if( PApplet.dist(heroX, heroY, thisX, thisY) < 50 )
+            ch.setTransPort(this.point.x, this.point.y);
     }
 }

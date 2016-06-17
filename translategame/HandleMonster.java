@@ -58,7 +58,6 @@ public class HandleMonster extends Thread {
                 this.boss.setMonsterInfo((MonsterInfoPkg) obj);
             } else if (obj instanceof AttackRequest) {
                 this.boss.enemy.attack();
-                System.out.println("get request");
             } else{
                 System.out.println("unregnize");
             }
@@ -80,7 +79,6 @@ public class HandleMonster extends Thread {
         try {
             out.writeObject(new AttackRequest());
             out.reset();
-            System.out.println("!Control send request");
         } catch (IOException ex) {
             Logger.getLogger(HandleMonster.class.getName()).log(Level.SEVERE, null, ex);
         }

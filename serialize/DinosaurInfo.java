@@ -12,10 +12,9 @@ import java.io.Serializable;
  * @author zlsh80826
  */
 public class DinosaurInfo extends MonsterInfo implements Serializable  {
-
-    public DinosaurInfo(float x, float y, boolean reverse, int action, int curHp) {
-        super(x, y, reverse, action, curHp);
+    
+    public DinosaurInfo(float x, float y, boolean reverse, int action, int curHp, boolean die, boolean dying) {
+        super(x, y, reverse, action, curHp, die, dying);
     }
-
     
 }

@@ -85,7 +85,8 @@ public class LoginPaint extends PApplet{
     }
     
     public void single(){
-        testStr = "Single";
+        this.parent.createSingle();
+        this.stop();
     }
     
     public void multiple(){

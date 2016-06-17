@@ -40,7 +40,8 @@ public class WaitRoomFront extends PApplet{
     public void draw(){
         background(255);
         fill(0);
-        text(time, 200, 200);
+        String str  = "Wait for " + time + "sec ...";
+        text(str, 522, 200);
     }
     
     public void setTime(String newTime){

@@ -26,16 +26,20 @@ public class SettingTimer extends TimerTask {
     
     @Override
     public void run() {
-        if (Action.HIT.equals(action)) {
-            ch.setAction(Action.STAND);
-            ch.setHit(value);
-        } else if (Action.ATTACK.equals(action)) {
-            if(ch.isMoving())
-                ch.setAction(Action.MOVE);
-            else
+        try{
+            if (Action.HIT.equals(action)) {
                 ch.setAction(Action.STAND);
-        } else if (action == Action.JUMP) {
-            Ani.to(ch, 0.2f, "y", ch.y + 50, Ani.SINE_IN);
+                ch.setHit(value);
+            } else if (Action.ATTACK.equals(action)) {
+                if(ch.isMoving())
+                    ch.setAction(Action.MOVE);
+                else
+                    ch.setAction(Action.STAND);
+            } else if (action == Action.JUMP) {
+                Ani.to(ch, 0.2f, "y", ch.y + 50, Ani.SINE_IN);
+            }
+        }catch(Exception ex){
+            
         }
     }
     

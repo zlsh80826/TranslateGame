@@ -11,10 +11,9 @@ import java.io.Serializable;
  *
  * @author zlsh80826
  */
-public class MushroomInfo extends MonsterInfo implements Serializable {
-
-    public MushroomInfo(float x, float y, boolean reverse, int action, int curHp, boolean die, boolean dying) {
-        super(x, y, reverse, action, curHp, die, dying);
+public class DmgRequest extends SerialItem implements Serializable {
+    public int dmg;
+    public DmgRequest(int dmg){
+        this.dmg = dmg;
     }
-
 }

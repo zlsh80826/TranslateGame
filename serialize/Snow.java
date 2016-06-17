@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
+import translategame.PvpFront;
 
 /**
  *
@@ -23,7 +24,7 @@ public class Snow extends Monster implements Serializable {
     // die
     // attack
 
-    public Snow(PApplet parent, float x, float y, StoryMap map) {
+    public Snow(PvpFront parent, float x, float y, StoryMap map) {
         this.frame = new ArrayList<Integer>();
         for (int i = 0; i < 10; ++i) {
             frame.add(0);
@@ -71,14 +72,15 @@ public class Snow extends Monster implements Serializable {
         this.count = 0;
         this.action = 0;
         this.active = true;
-        this.curHp = 400;
-        this.maxHp = 400;
+        this.curHp = 360;
+        this.maxHp = 360;
         this.width = images.get(0).get(0).width;
         this.height = images.get(0).get(0).height;
+        this.damage = 100;
     }
 
     public void display() {
-        if (active) {
+        if (!die || dying) {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
                     this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width + map.getX() + images.get(0).get(0).width,
                     this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height + map.getY());
@@ -87,71 +89,52 @@ public class Snow extends Monster implements Serializable {
                 int temp = (frame.get(this.getAction()) + 1) % (imageCount.get(this.getAction()));
                 frame.set(this.getAction(), temp);
             }
+
+            float green = 80 * curHp / maxHp;
+            float red = 80 - green;
+            //parent.noStroke();
+            parent.stroke(0);
+            parent.strokeWeight(2);
+            parent.fill(77, 255, 77);
+            parent.rect(this.x + map.getX(), this.y - 120, green, 8);
+            parent.fill(255, 77, 77);
+            parent.rect(this.x + map.getX() + green, this.y - 120, red, 8);
+
+            /*// collision detect
+            parent.noFill();
+            parent.strokeWeight(3);
+            parent.stroke(0);
+            parent.rect(this.x + map.getX(), this.y + map.getY() - height, width, height);*/
         }
-        float green = 80 * curHp / maxHp;
-        float red = 80 - green;
-        //parent.noStroke();
-        parent.stroke(0);
-        parent.strokeWeight(2);
-        parent.fill(77, 255, 77);
-        parent.rect(this.x + map.getX(), this.y - 120, green, 8);
-        parent.fill(255, 77, 77);
-        parent.rect(this.x + map.getX() + green, this.y - 120, red, 8);
-
-        // collision detect
-        parent.noFill();
-        parent.strokeWeight(3);
-        parent.stroke(0);
-        parent.rect(this.x + map.getX(), this.y + map.getY() - height, width, height);
-    }
-
-    public void setStand() {
-        action = 0;
-    }
-
-    public void setMove() {
-        action = 2;
-    }
-
-    public void setHit() {
-        action = 4;
-    }
-
-    public void setDie() {
-        action = 6;
-    }
-
-    public void setAttack() {
-        action = 8;
+        super.display();
     }
 
     public synchronized boolean isCollision(Character ch) {
+        if (this.die) {
+            return false;
+        }
         float thisCenterPointX = this.x + this.width / 2;
-        float thisCenterPointY = this.y + this.height / 2;
+        float thisCenterPointY = this.y - this.height / 2;
         float heroCenterPointX = ch.x + ch.width / 2;
-        float heroCenterPointY = ch.y + ch.height / 2;
+        float heroCenterPointY = ch.y - ch.height / 2;
 
         if (PApplet.dist(thisCenterPointX, thisCenterPointY, heroCenterPointX, heroCenterPointY) < (this.width + ch.width) / 2) {
             if (ch.getHit() == false) {
-                if( thisCenterPointX > heroCenterPointX )
-                    ch.setHit(random.nextInt(50) + 50, true);
-                else
-                    ch.setHit(random.nextInt(50) + 50, false);
+                if (thisCenterPointX > heroCenterPointX) {
+                    ch.setHit(random.nextInt(20) + 80, true);
+                } else {
+                    ch.setHit(random.nextInt(20) + 80, false);
+                }
             }
             return true;
         }
         return false;
     }
 
-    public void setInfo(MonsterInfo info) {
-        this.x = info.x;
-        this.y = info.y;
-        this.curHp = info.curHp;
-        this.reverse = info.reverse;
-        this.action = info.action;
-    }
-
     public synchronized void random() {
+        if (this.die) {
+            return;
+        }
         if (this.curHp == this.maxHp && this.action == 0 && rest) {
             this.action = 2;
             this.reverse = random.nextBoolean();
@@ -173,4 +156,13 @@ public class Snow extends Monster implements Serializable {
         }
     }
 
+    @Override
+    public void sendExp(Character ch) {
+        ch.pulseExp(400);
+    }
+
+    @Override
+    public int getExp() {
+        return 400;
+    }
 }

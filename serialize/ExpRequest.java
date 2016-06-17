@@ -11,10 +11,10 @@ import java.io.Serializable;
  *
  * @author zlsh80826
  */
-public class MushroomInfo extends MonsterInfo implements Serializable {
-
-    public MushroomInfo(float x, float y, boolean reverse, int action, int curHp, boolean die, boolean dying) {
-        super(x, y, reverse, action, curHp, die, dying);
+public class ExpRequest extends SerialItem implements Serializable {
+    public int exp;
+    
+    public ExpRequest(int exp){
+        this.exp = exp;
     }
-
 }

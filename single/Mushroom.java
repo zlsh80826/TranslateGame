@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package serialize;
+package single;
 
+import serialize.*;
 import de.looksgood.ani.Ani;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
 import translategame.PvpFront;
+import translategame.Single;
 
 /**
  *
@@ -23,7 +25,7 @@ public class Mushroom extends Monster implements Serializable {
     // move
     // hit 
     // die
-    public Mushroom(PvpFront parent, float x, float y, StoryMap map) {
+    public Mushroom(Single parent, float x, float y, StoryMap map) {
         this.frame = new ArrayList<Integer>();
         for (int i = 0; i < 8; ++i) {
             frame.add(0);
@@ -65,7 +67,7 @@ public class Mushroom extends Monster implements Serializable {
             images.add(temp);
         }
         this.count = 0;
-        this.action = 0;
+        this.action = 2;
         this.active = false;
         this.curHp = 12;
         this.maxHp = 12;
@@ -105,7 +107,7 @@ public class Mushroom extends Monster implements Serializable {
         super.display();
     }
 
-    public synchronized boolean isCollision(Character ch) {
+    /* public synchronized boolean isCollision(Character ch) {
         if (this.die) {
             return false;
         }
@@ -167,5 +169,9 @@ public class Mushroom extends Monster implements Serializable {
     @Override
     public int getExp() {
         return 10;
+    }*/
+    @Override
+    public void setAttack() {
+
     }
 }

@@ -3,27 +3,29 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package serialize;
+package single;
 
+import serialize.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import processing.core.PApplet;
 import static processing.core.PApplet.nf;
 import processing.core.PImage;
 import translategame.PvpFront;
+import translategame.Single;
 
 /**
  *
  * @author zlsh80826
  */
 public class Baron extends Monster implements Serializable {
-
+    int width;
     // stand 
     // move
     // hit 
     // die
     // attack
-    public Baron(PvpFront parent, float x, float y, StoryMap map) {
+    public Baron(Single parent, float x, float y, StoryMap map) {
         this.frame = new ArrayList<Integer>();
         for (int i = 0; i < 10; ++i) {
             frame.add(0);
@@ -73,28 +75,35 @@ public class Baron extends Monster implements Serializable {
         this.active = false;
         this.curHp = 8000;
         this.maxHp = 8000;
+        width = images.get(0).get(0).width;
     }
 
     public void display() {
         if (active) {
-            parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
-                    this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width + map.getX(),
-                    this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height + map.getY());
+            if(reverse){
+                 parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
+                        this.x + map.getX(),
+                        this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height + map.getY());               
+            }else{
+                parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
+                        this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width + map.getX(),
+                        this.y - images.get(this.getAction()).get(frame.get(this.getAction())).height + map.getY());
+            }
             if (++count % 12 == 0) {
                 count = 0;
                 int temp = (frame.get(this.getAction()) + 1) % (imageCount.get(this.getAction()));
                 frame.set(this.getAction(), temp);
             }
         }
-        float green = 80 * curHp / maxHp;
+        /*float green = 80 * curHp / maxHp;
         float red = 80 - green;
         //parent.noStroke();
-        parent.stroke(0);
+        /*parent.stroke(0);
         parent.strokeWeight(2);
         parent.fill(77, 255, 77);
         parent.rect(this.x - images.get(this.getAction()).get(frame.get(this.getAction())).width + map.getX(), this.y - 108, green, 8);
         parent.fill(255, 77, 77);
-        parent.rect(this.x - images.get(this.getAction()).get(frame.get(this.getAction())).height + map.getX() + green, this.y - 108, red, 8);
+        parent.rect(this.x - images.get(this.getAction()).get(frame.get(this.getAction())).height + map.getX() + green, this.y - 108, red, 8);*/
     }
 
     public void setStand() {
@@ -117,7 +126,7 @@ public class Baron extends Monster implements Serializable {
         action = 8;
     }
     
-    public void isCollision(Character ch){
+    /*public void isCollision(seriCharacter ch){
         float thisCenterPointX = this.x + this.width/2;
         float thisCenterPointY = this.y + this.height/2;
         float heroCenterPointX = ch.x + ch.width/2;
@@ -131,9 +140,9 @@ public class Baron extends Monster implements Serializable {
                     ch.setHit(random.nextInt(50) + 50, false);
             }
         }
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void sendExp(Character ch) {
         ch.pulseExp(500);
     }
@@ -141,6 +150,6 @@ public class Baron extends Monster implements Serializable {
     @Override
     public int getExp() {
         return 500;
-    }
+    }*/
 
 }

@@ -10,5 +10,5 @@ package serialize;
  * @author zlsh80826
  */
 public enum Action {
-    STAND, MOVE, ATTACK, HIT, ONRAP, JUMP, DIE
+    STAND, MOVE, ATTACK, HIT, ONRAP, JUMP, DIE, COOLDOWN, DYING
 }

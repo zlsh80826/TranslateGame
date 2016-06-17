@@ -19,7 +19,7 @@ import translategame.PvpFront;
  */
 public class ArchMan extends Character implements Serializable {
 
-    public ArchMan(PvpFront parent, float x, float y, StoryMap map) {
+    public ArchMan(PvpFront parent, float x, float y, StoryMap map, boolean control) {
         super();
         this.imageCount = new ArrayList<Integer>();
         this.imageCount.add(3);
@@ -78,20 +78,20 @@ public class ArchMan extends Character implements Serializable {
 
         this.map = map;
         this.LV = 1;
-        this.MaxHp = (int) (800 * Math.pow(1.1, LV));
+        this.MaxHp = (int) (25 * Math.pow(1.25, LV));
         this.curHp = MaxHp;
         this.MaxMp = (int) (300 * Math.pow(1.1, LV));
-        this.dmg = (int)(25 * Math.pow(1.7, LV));
+        this.dmg = (int) (3 * Math.pow(1.28, LV));
         this.curMp = MaxMp;
         this.width = images.get(0).get(0).width;
         this.height = images.get(0).get(0).height;
         this.aniseq = new AniSequence(this.parent);
         this.attackRange = 300;
+        this.control = control;
     }
 
     @Override
     public void display() {
-        super.display();
         if (reverse == true) {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())),
                     this.x - getWidth() + offset.get(this.getAction()) + map.getX(),
@@ -99,11 +99,28 @@ public class ArchMan extends Character implements Serializable {
         } else {
             parent.image(images.get(this.getAction()).get(frame.get(this.getAction())), this.x + map.getX(), this.y - getHeight() + map.getY());
         }
-
+        if (revealIntroducion) {
+            parent.stroke(0);
+            parent.strokeWeight(3);
+            parent.fill(200, 153, 126, 150);
+            parent.rect(750, 100, 300, 400, 25);
+            parent.fill(0);
+            parent.text("Archer", 765, 180);
+        }
+        super.display();
     }
 
     @Override
     public Info getInfo() {
-        return new Info(action, x, y, reverse, Career.Archer, this.curHp, this.LV, this.exp, this.curMp);
+        return new Info(action, x, y, reverse, Career.Archer, this.curHp, this.LV, 0, this.curMp, this.getInvincible(), this.MaxHp, this.MaxMp, this.lose, 0, "info");
+    }
+
+    @Override
+    public void updateInfo() {
+        this.MaxHp = (int) (25 * Math.pow(1.25, LV));
+        this.curHp = MaxHp;
+        this.MaxMp = (int) (300 * Math.pow(1.1, LV));
+        this.dmg = (int) (3 * Math.pow(1.28, LV));
+        this.curMp = MaxMp;
     }
 }

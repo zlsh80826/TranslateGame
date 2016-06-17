@@ -39,7 +39,7 @@ public class TranslateGame {
         frame.setIconImage(image);        
          */
         frame.setLocation(550, 100);//need to tune      
-        serverAddress = "127.0.0.1";
+        serverAddress = "192.168.1.177";
         serverPort = 8888;
     }
 
@@ -54,7 +54,7 @@ public class TranslateGame {
         Socket socket = new Socket(serverAddress, serverPort);
         Socket monsterSocket = new Socket(serverAddress, serverPort);
         ObjectInputStream out = new ObjectInputStream(socket.getInputStream());
-        
+
         RoomType type = (RoomType) out.readObject();
         if (type instanceof WaitRoomType) {
             createWaitRoom(socket, monsterSocket);
@@ -79,7 +79,6 @@ public class TranslateGame {
         }
     }
 
-    
     public void createPvpRoom(Socket socket, Socket monsterSocket, boolean control) {
         PvpRear pvpRear = new PvpRear(this, socket, monsterSocket);
         PvpFront pvpFront = new PvpFront(this, pvpRear, control);
@@ -94,5 +93,12 @@ public class TranslateGame {
     static public void main(String[] args) {
         TranslateGame game = new TranslateGame();
         game.start();
+    }
+
+    public void createSingle() {
+        Single single = new Single(this);
+        frame.setContentPane(single);
+        single.init();
+        single.start();
     }
 }
